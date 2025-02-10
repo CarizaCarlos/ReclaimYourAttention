@@ -1,10 +1,11 @@
 package com.reclaimyourattention.logic
 
 import android.app.NotificationManager
+import android.app.usage.UsageStatsManager
 import androidx.core.app.NotificationCompat
 import android.content.Context
 
-class RestReminders: Tool() {
+class RestReminders(private val context: Context): Tool() {
     // Variables Superclase
     override var title: String = "Recordatorios para Descansar del Teléfono"
     override var description: String =
@@ -12,7 +13,7 @@ class RestReminders: Tool() {
 
     // Parámetros
         // Solicitados
-        private var activeMinutesTreshold: Int = -1
+        private var activeMinutesTreshold: Int = 25
         // Inmutables
         private val inactiveMinutesTreshold: Int = 2
 
@@ -26,7 +27,7 @@ class RestReminders: Tool() {
     }
 
     // Métodos
-    private fun sendNotification(context: Context) {
+    private fun sendNotification() {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, "rest_reminder")
