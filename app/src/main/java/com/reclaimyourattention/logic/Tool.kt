@@ -15,12 +15,4 @@ abstract class Tool {
         return active
     }
 
-    fun getTitle(): String {
-        return title
-    }
-
-    fun getDescription(): String {
-        return description
-    }
-
 }

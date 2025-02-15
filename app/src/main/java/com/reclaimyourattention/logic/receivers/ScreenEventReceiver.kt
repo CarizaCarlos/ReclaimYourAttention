@@ -1,4 +1,4 @@
-package com.reclaimyourattention.receivers
+package com.reclaimyourattention.logic.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
