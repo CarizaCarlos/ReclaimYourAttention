@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import androidx.core.app.NotificationCompat
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import com.reclaimyourattention.R
 
 class RestReminders(private val context: Context): Tool() {
@@ -16,20 +15,43 @@ class RestReminders(private val context: Context): Tool() {
 
     // Parámetros
         // Solicitados
-        private var activeMinutesTreshold: Int = 25
+        private var activeMinutesThreshold: Int = 25
         // Inmutables
-        private val inactiveMinutesTreshold: Int = 2
+        private val inactiveMinutesThreshold: Int = 2
 
-    // Variables
+    // Variables de Control
     private var activeMinutes = 0
     private var inactiveMinutes = 0
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) {
+        if (parameters.size == 1 && parameters[0] is Int) {
+            activeMinutesThreshold = parameters[0] as Int
+        } else {
+            throw IllegalArgumentException(
+                "Error en activate(): Se esperaba exactamente 1 parámetro de tipo Int, " +
+                "pero se recibieron ${parameters.size} ${if (parameters.size == 1) "parámetro" else "parámetros"} +" +
+                "de tipo ${parameters.map { it::class.simpleName }}."
+            )
+        }
         active = true
     }
 
+    override fun deactivate() {
+        active = false
+    }
+
     // Métodos
+
+
+    private fun startUsageTracking() {
+
+    }
+
+    private fun startInactiveTracking() {
+
+    }
+
     private fun sendNotification(context: Context) {
         val notificationManager = context.getSystemService(NotificationManager::class.java)
 
@@ -43,7 +65,6 @@ class RestReminders(private val context: Context): Tool() {
                 description = "Notificaciones para recordarte descansar"
             }
 
-            // Registrar el canal en el sistema
             notificationManager.createNotificationChannel(channel)
         }
 

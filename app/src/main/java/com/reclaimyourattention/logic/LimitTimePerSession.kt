@@ -14,13 +14,17 @@ class LimitTimePerSession: Tool() {
         // Inmutables
         private val inactiveMinutesTreshold: Int = 2
 
-    // Variables
+    // Variables de Control
     private var activeMinutes = 0
     private var inactiveMinutes = 0
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) {
         active = true
+    }
+
+    override fun deactivate() {
+        active = false
     }
 
     // Métodos

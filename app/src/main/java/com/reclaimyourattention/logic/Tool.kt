@@ -7,12 +7,6 @@ abstract class Tool {
 
     abstract fun activate(vararg parameters: Any)
 
-    fun deactivate() {
-        this.active = false
-    }
-
-    fun isActive(): Boolean {
-        return active
-    }
+    abstract fun deactivate()
 
 }
