@@ -19,5 +19,9 @@ class WaitTimeForApp: Tool(){
         active = true
     }
 
+    override fun deactivate() {
+        active = false
+    }
+
     // Métodos
 }

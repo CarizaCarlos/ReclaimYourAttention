@@ -4,8 +4,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.core.app.NotificationCompat
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
+import android.os.Handler
+import android.os.HandlerThread
 import com.reclaimyourattention.R
+import com.reclaimyourattention.logic.receivers.ScreenReceiver
 
 class RestReminders(private val context: Context): Tool() {
     // Variables Superclase
@@ -15,44 +20,98 @@ class RestReminders(private val context: Context): Tool() {
 
     // Parámetros
         // Solicitados
-        private var activeMinutesThreshold: Int = 25
+        private var activityMinutesThreshold: Int = 25
         // Inmutables
-        private val inactiveMinutesThreshold: Int = 2
+        private val inactiveSecondsThreshold: Int = 45
 
     // Variables de Control
-    private var activeMinutes = 0
-    private var inactiveMinutes = 0
+    private var activitySeconds = 0
+    private var handlerThread: HandlerThread? = null
+    private var handler: Handler? = null
+    private var screenReceiver: ScreenReceiver? = null
+
+    // Runnables
+    private val countRunnable = object : Runnable {
+        val refreshSeconds: Int = 5
+        override fun run() {
+            activitySeconds += refreshSeconds
+            println("Tiempo Activo: $activitySeconds seg")
+
+            // Revisa si el usuario supera el tiempo establecido
+            if (activitySeconds >= activityMinutesThreshold*60) {
+                sendNotification()
+                activitySeconds = 0 // Reinicia el conteo
+            }
+
+            handler?.postDelayed(this, refreshSeconds.toLong()*1000) // Vuelve a ejecutar luego de 15 segundos
+        }
+    }
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) {
+        // Verifica la entrada y actualiza los parámetros
         if (parameters.size == 1 && parameters[0] is Int) {
-            activeMinutesThreshold = parameters[0] as Int
+            activityMinutesThreshold = parameters[0] as Int
         } else {
             throw IllegalArgumentException(
                 "Error en activate(): Se esperaba exactamente 1 parámetro de tipo Int, " +
-                "pero se recibieron ${parameters.size} ${if (parameters.size == 1) "parámetro" else "parámetros"} +" +
-                "de tipo ${parameters.map { it::class.simpleName }}."
+                "pero se recibieron ${parameters.size} ${if (parameters.size == 1) "parámetro" else "parámetros"} " +
+                "de tipo ${parameters.joinToString(", ") { it::class.simpleName ?: "Desconocido" }}."
             )
         }
+
+        // Inicializa los procesos de la herramienta
         active = true
+        startMonitoring()
     }
 
     override fun deactivate() {
         active = false
+        stopMonitoring()
     }
 
     // Métodos
+    private fun startMonitoring() {
+        // Inicializa los handler
+        handlerThread = HandlerThread("RestRemindersThread").apply { start() }
+        handler = Handler(handlerThread!!.looper)
 
+        // Inicializa el Receiver para escuchar cuando se enciende y apaga la pantalla
+        screenReceiver = ScreenReceiver(
+            onScreenOn = {
+                // Detiene el reinicio de la cuenta (Si no se ha reiniciado)
+                handler?.removeCallbacksAndMessages(null)
+                // Empieza a contar el tiempo de actividad
+                handler?.postDelayed(countRunnable, countRunnable.refreshSeconds.toLong()*1000)
+            },
+            onScreenOff = {
+                // Frena el conteo
+                handler?.removeCallbacksAndMessages(null)
+                // Reinicia la cuenta si se supera el threshold
+                handler?.postDelayed({
+                    activitySeconds = 0
+                }, inactiveSecondsThreshold.toLong()*1000)
+            }
+        )
+        val filter = IntentFilter(Intent.ACTION_SCREEN_ON).apply {
+            addAction(Intent.ACTION_SCREEN_OFF)
+        }
+        context.registerReceiver(screenReceiver, filter)
 
-    private fun startUsageTracking() {
-
+        // Empieza el proceso por primera vez
+        handler?.postDelayed(countRunnable, countRunnable.refreshSeconds.toLong()*1000)
     }
 
-    private fun startInactiveTracking() {
-
+    private fun stopMonitoring() {
+        handler?.removeCallbacksAndMessages(null)
+        screenReceiver?.let { context.unregisterReceiver(it) }
+        handlerThread?.quitSafely()
+        handler = null
+        handlerThread = null
+        screenReceiver = null
     }
 
-    private fun sendNotification(context: Context) {
+    private fun sendNotification() {
         val notificationManager = context.getSystemService(NotificationManager::class.java)
 
         // Se crea el canal de notificación
