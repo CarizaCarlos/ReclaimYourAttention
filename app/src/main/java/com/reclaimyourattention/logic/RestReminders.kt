@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.ScreenReceiver
 
@@ -20,9 +21,9 @@ class RestReminders(private val context: Context): Tool() {
 
     // Parámetros
         // Solicitados
-        private var activityMinutesThreshold: Int = 25
+        private var activityMinutesThreshold: Int = 1
         // Inmutables
-        private val inactiveSecondsThreshold: Int = 45
+        private val inactiveSecondsThreshold: Int = 5
 
     // Variables de Control
     private var activitySeconds = 0
@@ -35,7 +36,8 @@ class RestReminders(private val context: Context): Tool() {
         val refreshSeconds: Int = 5
         override fun run() {
             activitySeconds += refreshSeconds
-            println("Tiempo Activo: $activitySeconds seg")
+
+            Log.d("RestReminders", "Tiempo Activo: $activitySeconds seg") // Log
 
             // Revisa si el usuario supera el tiempo establecido
             if (activitySeconds >= activityMinutesThreshold*60) {
@@ -83,13 +85,19 @@ class RestReminders(private val context: Context): Tool() {
                 handler?.removeCallbacksAndMessages(null)
                 // Empieza a contar el tiempo de actividad
                 handler?.postDelayed(countRunnable, countRunnable.refreshSeconds.toLong()*1000)
+
+                Log.d("RestReminders", "Se Inicia el Conteo") // Log
             },
             onScreenOff = {
                 // Frena el conteo
                 handler?.removeCallbacksAndMessages(null)
                 // Reinicia la cuenta si se supera el threshold
+                Log.d("RestReminders", "Empieza la Espera de Inactividad") // Log
+
                 handler?.postDelayed({
                     activitySeconds = 0
+
+                    Log.d("RestReminders", "Conteo Reiniciado") // Log
                 }, inactiveSecondsThreshold.toLong()*1000)
             }
         )
@@ -137,5 +145,7 @@ class RestReminders(private val context: Context): Tool() {
 
         // Se envía la notificación
         notificationManager.notify(1, notification)
+
+        Log.d("RestReminders", "Notificación Enviada") // Log
     }
 }
