@@ -37,7 +37,7 @@ class RestReminders(private val context: Context): Tool() {
         override fun run() {
             activitySeconds += refreshSeconds
 
-            //Log.d("RestReminders", "Tiempo Activo: $activitySeconds seg") // Log
+            Log.d("RestReminders", "Tiempo Activo: $activitySeconds seg") // Log
 
             // Revisa si el usuario supera el tiempo establecido
             if (activitySeconds >= activityMinutesThreshold*60) {
@@ -65,6 +65,7 @@ class RestReminders(private val context: Context): Tool() {
         // Inicializa los procesos de la herramienta
         active = true
         startMonitoring()
+        TODO("El proceso se frena cuando la app se cierra, corregirlo")
     }
 
     override fun deactivate() {
@@ -87,7 +88,7 @@ class RestReminders(private val context: Context): Tool() {
                 // Empieza a contar el tiempo de actividad
                 handler?.postDelayed(countRunnable, countRunnable.refreshSeconds.toLong()*1000)
 
-                //Log.d("RestReminders", "Se Inicia el Conteo") // Log
+                Log.d("RestReminders", "Se Inicia el Conteo") // Log
             },
             onScreenOff = {
                 // Frena el conteo
@@ -100,7 +101,7 @@ class RestReminders(private val context: Context): Tool() {
                     Log.d("RestReminders", "Conteo Reiniciado") // Log
                 }, inactiveSecondsThreshold.toLong()*1000)
 
-                //Log.d("RestReminders", "Empieza la Espera de Inactividad") // Log
+                Log.d("RestReminders", "Empieza la Espera de Inactividad") // Log
             }
         )
         // Crea el filtro y registra el Receiver
@@ -149,6 +150,6 @@ class RestReminders(private val context: Context): Tool() {
         // Se envía la notificación
         notificationManager.notify(1, notification)
 
-        //Log.d("RestReminders", "Notificación Enviada") // Log
+        Log.d("RestReminders", "Notificación Enviada") // Log
     }
 }
