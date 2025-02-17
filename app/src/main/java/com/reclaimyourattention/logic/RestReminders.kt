@@ -37,7 +37,7 @@ class RestReminders(private val context: Context): Tool() {
         override fun run() {
             activitySeconds += refreshSeconds
 
-            Log.d("RestReminders", "Tiempo Activo: $activitySeconds seg") // Log
+            //Log.d("RestReminders", "Tiempo Activo: $activitySeconds seg") // Log
 
             // Revisa si el usuario supera el tiempo establecido
             if (activitySeconds >= activityMinutesThreshold*60) {
@@ -83,22 +83,24 @@ class RestReminders(private val context: Context): Tool() {
             onScreenOn = {
                 // Detiene el reinicio de la cuenta (Si no se ha reiniciado)
                 handler?.removeCallbacksAndMessages(null)
+
                 // Empieza a contar el tiempo de actividad
                 handler?.postDelayed(countRunnable, countRunnable.refreshSeconds.toLong()*1000)
 
-                Log.d("RestReminders", "Se Inicia el Conteo") // Log
+                //Log.d("RestReminders", "Se Inicia el Conteo") // Log
             },
             onScreenOff = {
                 // Frena el conteo
                 handler?.removeCallbacksAndMessages(null)
-                // Reinicia la cuenta si se supera el threshold
-                Log.d("RestReminders", "Empieza la Espera de Inactividad") // Log
 
+                // Reinicia la cuenta si se supera el threshold
                 handler?.postDelayed({
                     activitySeconds = 0
 
                     Log.d("RestReminders", "Conteo Reiniciado") // Log
                 }, inactiveSecondsThreshold.toLong()*1000)
+
+                //Log.d("RestReminders", "Empieza la Espera de Inactividad") // Log
             }
         )
         val filter = IntentFilter(Intent.ACTION_SCREEN_ON).apply {
@@ -146,6 +148,6 @@ class RestReminders(private val context: Context): Tool() {
         // Se envía la notificación
         notificationManager.notify(1, notification)
 
-        Log.d("RestReminders", "Notificación Enviada") // Log
+        //Log.d("RestReminders", "Notificación Enviada") // Log
     }
 }

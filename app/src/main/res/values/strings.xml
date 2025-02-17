@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Reclaim Your Attention</string>
+    <string name="accessibility_service_description">Servicio de accesibilidad para detectar apps en primer plano</string>
 </resources>
