@@ -103,6 +103,7 @@ class RestReminders(private val context: Context): Tool() {
                 //Log.d("RestReminders", "Empieza la Espera de Inactividad") // Log
             }
         )
+        // Crea el filtro y registra el Receiver
         val filter = IntentFilter(Intent.ACTION_SCREEN_ON).apply {
             addAction(Intent.ACTION_SCREEN_OFF)
         }
