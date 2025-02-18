@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,6 +16,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ReclaimYourAttention"
         tools:targetApi="31">
+        <service
+            android:name=".logic.services.RestRemindersService"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="explanation_for_special_use" />
+        </service>
         <service
             android:name="com.reclaimyourattention.logic.services.ForegroundAppService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"

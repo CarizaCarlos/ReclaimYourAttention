@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +24,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val r: RestReminders = RestReminders(this)
+
         setContent {
             ReclaimYourAttentionTheme {
                 val navController = rememberNavController()
@@ -31,11 +34,17 @@ class MainActivity : ComponentActivity() {
                     composable("tools") { ToolsScreen(navController) }
                     composable("usage") { UsageScreen(navController) }
                 }
-                Button(onClick = {
-                    val r: RestReminders = RestReminders(this)
-                    r.activate(1)
-                }) {
-                    Text("Activar RestRemidners")
+                Column {
+                    Button(onClick = {
+                        r.activate(1)
+                    }) {
+                        Text("Activar RestRemidners")
+                    }
+                    Button(onClick = {
+                        r.deactivate()
+                    }) {
+                        Text("Desactivar RestRemidners")
+                    }
                 }
             }
         }
