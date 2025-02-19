@@ -24,7 +24,7 @@
                 android:value="explanation_for_special_use" />
         </service>
         <service
-            android:name="com.reclaimyourattention.logic.services.ForegroundAppService"
+            android:name="com.reclaimyourattention.logic.services.AppBlockService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="true">
             <intent-filter>

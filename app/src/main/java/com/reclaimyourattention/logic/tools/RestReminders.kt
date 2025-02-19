@@ -17,16 +17,19 @@ class RestReminders(private val context: Context): Tool() {
     private val prefs = context.getSharedPreferences("RestReminderPrefs", Context.MODE_PRIVATE)
 
     // Métodos Superclase
-    override fun activate(vararg parameters: Any) {
+    override fun activate(vararg parameters: Any) { // activityMinutesThreshold: Int
         active = true
 
         // Verifica la entrada y actualiza los parámetros
-        if (parameters.size == 1 && parameters[0] is Int) {
+        if (parameters.size == 1
+            && parameters[0] is Int)
+        {
             activityMinutesThreshold = parameters[0] as Int
         } else {
             throw IllegalArgumentException(
                 "Error en activate(): Se esperaba exactamente 1 parámetro de tipo Int, " +
-                "pero se recibieron ${parameters.size} ${if (parameters.size == 1) "parámetro" else "parámetros"} " +
+                "pero se ${if (parameters.size == 1) "recibió" else "recibieron"} ${parameters.size} " +
+                "${if (parameters.size == 1) "parámetro" else "parámetros"} " +
                 "de tipo ${parameters.joinToString(", ") { it::class.simpleName ?: "Desconocido" }}."
             )
         }

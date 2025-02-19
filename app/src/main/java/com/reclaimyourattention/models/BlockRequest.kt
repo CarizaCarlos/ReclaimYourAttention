@@ -3,7 +3,7 @@ package com.reclaimyourattention.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AppBlockRequest(
+data class BlockRequest(
     val tool: ToolType,
     val message: String,
     val durationSeconds: Int,
