@@ -4,13 +4,8 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import com.reclaimyourattention.models.BlockRequest
-import com.reclaimyourattention.models.ToolType
 
-class AppBlockService: AccessibilityService() {
-    // Parámetros Solicitados
-    private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
-
+class WaitTimeForAppService: AccessibilityService() {
     // Variables de Control
     private var lastPackageName: String? = null
 

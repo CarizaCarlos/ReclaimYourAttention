@@ -10,7 +10,7 @@ class RestReminders(private val context: Context): Tool() {
     override var description: String =
         "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
 
-    // Parámetros Solicitados
+    // Parámetros Solicitados al User
     private var activityMinutesThreshold: Int = 1
 
     // Persistencia
@@ -34,7 +34,7 @@ class RestReminders(private val context: Context): Tool() {
             )
         }
 
-        // Guarda los parámetros solicitados
+        // Guarda los parámetros
         saveParameters()
 
         // Inicia el servicio
