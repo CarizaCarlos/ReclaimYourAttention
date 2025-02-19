@@ -21,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.reclaimyourattention.R
-import com.reclaimyourattention.logic.RestReminders
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

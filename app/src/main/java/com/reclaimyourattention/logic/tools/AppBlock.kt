@@ -1,43 +1,34 @@
-package com.reclaimyourattention.logic
+package com.reclaimyourattention.logic.tools
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import androidx.core.app.NotificationCompat
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import android.util.Log
-import com.reclaimyourattention.R
-import com.reclaimyourattention.logic.receivers.ScreenReceiver
 import com.reclaimyourattention.logic.services.RestRemindersService
 
-class RestReminders(private val context: Context): Tool() {
+class AppBlock(private val context: Context): Tool() {
     // Variables Superclase
     override var title: String = "Recordatorios para Descansar del Teléfono"
     override var description: String =
         "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
 
     // Parámetros Solicitados
-    private var activityMinutesThreshold: Int = 1
+    private var blockedPackages= mutableMapOf<String, Pair<String, Int>>() // <Package, Pair<Message, CountdownSeconds>>
 
     // Persistencia
-    private val prefs = context.getSharedPreferences("RestReminderPrefs", Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences("AppBlockPrefs", Context.MODE_PRIVATE)
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) {
         active = true
 
         // Verifica la entrada y actualiza los parámetros
-        if (parameters.size == 1 && parameters[0] is Int) {
-            activityMinutesThreshold = parameters[0] as Int
+        // Verifica que primero se pase un set de los paquetes a bloquear
+        if (parameters[0] is MutableSet<String>) {
+            blockedPackages = parameters[0] as Int
         } else {
             throw IllegalArgumentException(
                 "Error en activate(): Se esperaba exactamente 1 parámetro de tipo Int, " +
-                "pero se recibieron ${parameters.size} ${if (parameters.size == 1) "parámetro" else "parámetros"} " +
-                "de tipo ${parameters.joinToString(", ") { it::class.simpleName ?: "Desconocido" }}."
+                        "pero se recibieron ${parameters.size} ${if (parameters.size == 1) "parámetro" else "parámetros"} " +
+                        "de tipo ${parameters.joinToString(", ") { it::class.simpleName ?: "Desconocido" }}."
             )
         }
 

@@ -1,4 +1,4 @@
-package com.reclaimyourattention.logic
+package com.reclaimyourattention.logic.tools
 
 class BlockingScheduleForApp: Tool()  {
     //Variables Superclase

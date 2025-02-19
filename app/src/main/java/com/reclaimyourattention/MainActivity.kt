@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.reclaimyourattention.logic.RestReminders
+import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.ui.MainScreen
 import com.reclaimyourattention.ui.ToolsScreen
 import com.reclaimyourattention.ui.UsageScreen

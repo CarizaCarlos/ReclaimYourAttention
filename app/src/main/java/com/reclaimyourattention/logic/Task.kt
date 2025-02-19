@@ -1,5 +1,7 @@
 package com.reclaimyourattention.logic
 
+import com.reclaimyourattention.logic.tools.Tool
+
 class Task(
     private var title: String,
     private var content: String,

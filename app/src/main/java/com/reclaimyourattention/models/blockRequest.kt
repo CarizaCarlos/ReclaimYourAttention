@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class AppBlockRequest(
     val tool: ToolType,
     val message: String,
-    val duration: Int,
+    val durationSeconds: Int,
     val showCountdown: Boolean
 )
 

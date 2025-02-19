@@ -1,4 +1,4 @@
-package com.reclaimyourattention.logic
+package com.reclaimyourattention.logic.tools
 
 abstract class Tool {
     // Atributos
