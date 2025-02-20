@@ -1,8 +1,11 @@
 package com.reclaimyourattention.logic.services
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -24,8 +27,22 @@ class WaitTimeForAppService: Service() {
 
     // Métodos Superclase
     override fun onCreate() {
+        // Se crea el canal de notificación
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "wait_time_for_app", // ID del canal
+                "Tiempo de Espera para Apps", // Nombre visible
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "..."
+            }
+
+            notificationManager.createNotificationChannel(channel)
+        }
+
         // Inicializa el Receiver para escuchar cuando se cambia de app
-        val foregroundAppReceiver = ForegroundAppReceiver(
+        foregroundAppReceiver = ForegroundAppReceiver(
             onAppChanged = { packageName ->
                 // Verifica si el paquete está marcado
                 if (packageName in blockedPackages) {
@@ -33,7 +50,7 @@ class WaitTimeForAppService: Service() {
 
                     // Faltaaa solicitud <<<<<
 
-                    Log.d("WaitTimeForAppService", "Se Envía Solicitúd para Bloquear: $packageName") // Log
+                    Log.d("WaitTimeForAppService", "Se Envía Solicitúd para Bloquear: $packageName por $waitSeconds seg") // Log
                 }
             }
         )
@@ -54,7 +71,7 @@ class WaitTimeForAppService: Service() {
         // Recupera los parámetros solicitados
         val prefs = getSharedPreferences("WaitTimeForAppPrefs", MODE_PRIVATE)
         waitSeconds = prefs.getInt("waitSeconds", waitSeconds)
-        blockedPackages = prefs.getStringSet("waitSeconds", blockedPackages) ?: mutableSetOf()
+        blockedPackages = prefs.getStringSet("blockedPackages", blockedPackages) ?: mutableSetOf()
 
         Log.d("WaitTimeForAppService", "waitSeconds: $waitSeconds, blockedPackages: $blockedPackages") // Log
 

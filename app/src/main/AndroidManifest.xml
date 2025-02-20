@@ -17,6 +17,13 @@
         android:theme="@style/Theme.ReclaimYourAttention"
         tools:targetApi="31">
         <service
+            android:name=".logic.services.WaitTimeForAppService"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="explanation_for_special_use" />
+        </service>
+        <service
             android:name=".logic.services.RestRemindersService"
             android:foregroundServiceType="specialUse">
             <property

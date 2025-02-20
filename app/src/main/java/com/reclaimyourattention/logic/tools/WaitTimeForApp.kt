@@ -2,6 +2,7 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.reclaimyourattention.logic.services.WaitTimeForAppService
 
 class WaitTimeForApp(private val context: Context): Tool(){

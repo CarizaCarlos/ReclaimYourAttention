@@ -13,7 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.reclaimyourattention.logic.services.WaitTimeForAppService
 import com.reclaimyourattention.logic.tools.RestReminders
+import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import com.reclaimyourattention.ui.MainScreen
 import com.reclaimyourattention.ui.ToolsScreen
 import com.reclaimyourattention.ui.UsageScreen
@@ -25,6 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val r: RestReminders = RestReminders(this)
+        val w: WaitTimeForApp = WaitTimeForApp(this)
 
         setContent {
             ReclaimYourAttentionTheme {
@@ -44,6 +47,18 @@ class MainActivity : ComponentActivity() {
                         r.deactivate()
                     }) {
                         Text("Desactivar RestRemidners")
+                    }
+                    Button(onClick = {
+                        val waitSeconds: Int = 5
+                        val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome","com.google.android.youtube")
+                        w.activate(waitSeconds, blockedPackages)
+                    }) {
+                        Text("Activar WaitTimeForApp")
+                    }
+                    Button(onClick = {
+                        w.deactivate()
+                    }) {
+                        Text("Desactivar WaitTimeForApp")
                     }
                 }
             }
