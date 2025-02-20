@@ -18,7 +18,7 @@ import com.reclaimyourattention.logic.receivers.ScreenReceiver
 
 class RestRemindersService: Service() {
     // Parámetros
-        // Solicitados
+        // Solicitados al User
         private var activityMinutesThreshold: Int = 25
         // Inmutables
         private val inactiveSecondsThreshold: Int = 5
@@ -92,16 +92,6 @@ class RestRemindersService: Service() {
                 Log.d("RestRemindersService", "Empieza la Espera de Inactividad") // Log
             }
         )
-
-        // TEST <<<<<<<
-        val foregroundAppReceiver = ForegroundAppReceiver()
-        val filter = IntentFilter("FOREGROUND_APP_CHANGED")
-        ContextCompat.registerReceiver(
-            this,
-            foregroundAppReceiver,
-            filter,
-            ContextCompat.RECEIVER_EXPORTED
-        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -110,7 +100,7 @@ class RestRemindersService: Service() {
             .setContentTitle("Servicio en primer plano")
             .setContentText("El servicio está ejecutándose en primer plano.")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
 
         // Inicia el servicio en primer plano
