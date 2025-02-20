@@ -11,10 +11,7 @@ class RestReminders(private val context: Context): Tool() {
         "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
 
     // Parámetros Solicitados al User
-    private var activityMinutesThreshold: Int = 1
-
-    // Persistencia
-    private val prefs = context.getSharedPreferences("RestReminderPrefs", Context.MODE_PRIVATE)
+    private var activityMinutesThreshold: Int = 25
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // activityMinutesThreshold: Int
@@ -49,6 +46,7 @@ class RestReminders(private val context: Context): Tool() {
 
     // Métodos
     private fun saveParameters() {
+        val prefs = context.getSharedPreferences("RestReminderPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putInt("activityMinutesThreshold", activityMinutesThreshold)
             apply()

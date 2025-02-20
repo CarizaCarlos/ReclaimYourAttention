@@ -11,7 +11,9 @@ import android.os.HandlerThread
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.reclaimyourattention.R
+import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
 import com.reclaimyourattention.logic.receivers.ScreenReceiver
 
 class RestRemindersService: Service() {
@@ -90,6 +92,16 @@ class RestRemindersService: Service() {
                 Log.d("RestRemindersService", "Empieza la Espera de Inactividad") // Log
             }
         )
+
+        // TEST <<<<<<<
+        val foregroundAppReceiver = ForegroundAppReceiver()
+        val filter = IntentFilter("FOREGROUND_APP_CHANGED")
+        ContextCompat.registerReceiver(
+            this,
+            foregroundAppReceiver,
+            filter,
+            ContextCompat.RECEIVER_EXPORTED
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -111,8 +123,6 @@ class RestRemindersService: Service() {
         registerReceiver(screenReceiver, filter)
 
         // Recupera los parámetros solicitados
-        Log.d("RestRemindersService", "activityMinutesThreshold: $activityMinutesThreshold") // Log
-
         val prefs = getSharedPreferences("RestReminderPrefs", MODE_PRIVATE)
         activityMinutesThreshold = prefs.getInt("activityMinutesThreshold", activityMinutesThreshold)
 

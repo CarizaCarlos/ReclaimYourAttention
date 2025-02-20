@@ -3,15 +3,13 @@ package com.reclaimyourattention.logic.services
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
 class ForegroundAppTracker: AccessibilityService() {
     // Variables de Control
     private var lastPackageName: String? = null
-
-    // Persistencia
-    private val prefs = getSharedPreferences("ForegroundAppTracker", Context.MODE_PRIVATE)
 
     // Métodos Superclase
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -27,10 +25,11 @@ class ForegroundAppTracker: AccessibilityService() {
                 lastPackageName = packageName
 
                 // Guarda el paquete
+                val prefs = getSharedPreferences("ForegroundAppTracker", Context.MODE_PRIVATE)
                 prefs.edit().putString("lastPackageName", lastPackageName).apply()
 
                 // Envía un Broadcast
-                sendBroadcast(Intent("com.reclaimyourattention.FOREGROUND_APP_CHANGED"))
+                sendBroadcast(Intent("FOREGROUND_APP_CHANGED"))
 
                 Log.d("ForegroundAppTracker", "Se ha emitido el Broadcast. App en primer plano: $packageName")
             }
@@ -38,11 +37,10 @@ class ForegroundAppTracker: AccessibilityService() {
     }
 
     override fun onInterrupt() {
-        Log.d("AppFocusTracker", "Servicio interrumpido")
+        Log.d("ForegroundAppTracker", "Servicio interrumpido")
     }
 
     override fun onServiceConnected() {
-        super.onServiceConnected()
-        Log.d("AppFocusTracker", "Servicio de accesibilidad conectado")
+        Log.d("ForegroundAppTracker", "Servicio de accesibilidad conectado")
     }
 }
