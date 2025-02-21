@@ -4,10 +4,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.AppBlockRequestReceiver
 import com.reclaimyourattention.models.BlockRequest
@@ -15,7 +17,7 @@ import com.reclaimyourattention.models.ToolType
 
 class AppBlockService: Service() {
     // Parámetros
-    private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
+    private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest?>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
 
     // Variables de Control
     private var appBlockRequestReceiver: AppBlockRequestReceiver? = null
@@ -38,15 +40,22 @@ class AppBlockService: Service() {
 
         // Inicializa el Receiver para escuchar block y unblock requests
         appBlockRequestReceiver = AppBlockRequestReceiver(
-            onBlockRequest = {
+            onBlockRequest = { appPackages, request ->
                 // Asocia el BlockRequest a cada paquete proporcionado y lo guarda en blockedPackages
                 for (appPackage in appPackages) {
                     // Crea un nuevo MutableMap<ToolType, BlockRequest> de ser necesario y asigna el nuevo blockRequest a su clave correspondiente
-                    blockedPackages.getOrPut(appPackage) { mutableMapOf() }[blockRequest.tool] = blockRequest
+                    Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
+                    blockedPackages.getOrPut(appPackage) { mutableMapOf() }[request.tool] = request
+                    Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
                 }
             },
-            onUnblockRequest = {
-
+            onUnblockRequest = { appPackages, tool ->
+                // Elimina el blockRequest asignado a la tool de cada paquete
+                for (appPackage in appPackages) {
+                    Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
+                    blockedPackages[appPackage]?.remove(tool)
+                    Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
+                }
             }
         )
     }
@@ -62,6 +71,17 @@ class AppBlockService: Service() {
 
         // Inicia el servicio en primer plano
         startForeground(1, persistentNotification)
+
+        // Crea el filtro y registra el Receiver
+        val filter = IntentFilter("BLOCK_REQUEST").apply {
+            addAction("UNBLOCK_REQUEST")
+        }
+        ContextCompat.registerReceiver(
+            this,
+            appBlockRequestReceiver,
+            filter,
+            ContextCompat.RECEIVER_EXPORTED
+        )
 
         Log.d("AppBlockService", "Servicio Activado") // Log
 

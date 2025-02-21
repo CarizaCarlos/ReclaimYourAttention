@@ -1,5 +1,6 @@
 package com.reclaimyourattention
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.reclaimyourattention.logic.services.AppBlockService
 import com.reclaimyourattention.logic.services.WaitTimeForAppService
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.WaitTimeForApp
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
         val r: RestReminders = RestReminders(this)
         val w: WaitTimeForApp = WaitTimeForApp(this)
+        val context = this
 
         setContent {
             ReclaimYourAttentionTheme {
@@ -49,7 +52,7 @@ class MainActivity : ComponentActivity() {
                         Text("Desactivar RestRemidners")
                     }
                     Button(onClick = {
-                        val waitSeconds: Int = 5
+                        val waitSeconds: Int = 10
                         val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome","com.google.android.youtube")
                         w.activate(waitSeconds, blockedPackages)
                     }) {
@@ -59,6 +62,11 @@ class MainActivity : ComponentActivity() {
                         w.deactivate()
                     }) {
                         Text("Desactivar WaitTimeForApp")
+                    }
+                    Button(onClick = {
+                        context.startService(Intent(context, AppBlockService::class.java))
+                    }) {
+                        Text("Activar AppBlockService")
                     }
                 }
             }

@@ -68,7 +68,7 @@ class AppBlock(private val context: Context): Tool() {
         // Envia un unblockRequest a AppBlockService
         val intent = Intent("UNBLOCK_REQUEST")
             .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
-            .putExtra("toolType", ToolType.INDEFINITELY)
+            .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
         context.sendBroadcast(intent)
     }
 

@@ -15,7 +15,6 @@ import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
 import com.reclaimyourattention.models.BlockRequest
 import com.reclaimyourattention.models.ToolType
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
 
@@ -109,7 +108,7 @@ class WaitTimeForAppService: Service() {
         // Envia un unblockRequest a AppBlockService por si existe algún bloqueo activo
         val intent = Intent("UNBLOCK_REQUEST")
             .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
-            .putExtra("toolType", ToolType.WAIT_TIME)
+            .putExtra("toolType", Json.encodeToString(ToolType.WAIT_TIME))
         sendBroadcast(intent)
 
         Log.d("WaitTimeForAppService", "Servicio Terminado") // Log
