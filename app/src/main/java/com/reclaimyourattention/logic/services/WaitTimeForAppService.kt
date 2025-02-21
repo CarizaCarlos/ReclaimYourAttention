@@ -11,8 +11,11 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.reclaimyourattention.R
+import com.reclaimyourattention.logic.receivers.AppBlockRequestReceiver
 import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
 import com.reclaimyourattention.logic.receivers.ScreenReceiver
+import com.reclaimyourattention.models.BlockRequest
+import com.reclaimyourattention.models.ToolType
 
 class WaitTimeForAppService: Service() {
     // Parámetros
@@ -47,8 +50,13 @@ class WaitTimeForAppService: Service() {
                 // Verifica si el paquete está marcado
                 if (packageName in blockedPackages) {
                     // Realiza una solicitúd de bloqueo a AppBlockService
-
-                    // Faltaaa solicitud <<<<<
+                    val blockRequest = BlockRequest(
+                        ToolType.WAIT_TIME,
+                        "Mensaje WaitTime",
+                        TODO(),
+                        true
+                    )
+                    sendBroadcast(Intent("BLOCK_REQUEST").putExtra(TODO()))
 
                     Log.d("WaitTimeForAppService", "Se Envía Solicitúd para Bloquear: $packageName por $waitSeconds seg") // Log
                 }
@@ -92,6 +100,16 @@ class WaitTimeForAppService: Service() {
     override fun onDestroy() {
         unregisterReceiver(foregroundAppReceiver)
         foregroundAppReceiver = null
+
+        // Realiza una solicitúd de desbloqueo a AppBlockService
+        val unblockRequest = BlockRequest( TODO("Quizás es mejor hacer un dataclass separado o enviar un mutable set")
+            ToolType.WAIT_TIME,
+            "Mensaje WaitTime",
+            TODO(),
+            true
+        )
+
+        TODO("Enviar broadcast")
 
         Log.d("WaitTimeForAppService", "Servicio Terminado") // Log
     }

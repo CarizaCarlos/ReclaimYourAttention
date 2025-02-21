@@ -46,8 +46,12 @@ class WaitTimeForApp(private val context: Context): Tool(){
 
     override fun deactivate() {
         active = false
+
         // Frena el servicio
         context.stopService(Intent(context, WaitTimeForAppService::class.java))
+
+        // Envia un unblockRequest a AppBlockService
+        context.sendBroadcast(Intent("UNBLOCK_REQUEST").putExtra(TODO()))
     }
 
     // Métodos

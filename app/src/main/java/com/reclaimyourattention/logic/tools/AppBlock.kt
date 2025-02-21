@@ -2,10 +2,13 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
+import com.reclaimyourattention.logic.services.AppBlockService
 import com.reclaimyourattention.logic.services.RestRemindersService
+import com.reclaimyourattention.logic.services.WaitTimeForAppService
 import com.reclaimyourattention.models.BlockRequest
 import com.reclaimyourattention.models.ToolType
 import kotlinx.serialization.json.Json
+import java.time.LocalDateTime
 
 class AppBlock(private val context: Context): Tool() {
     // Variables Superclase
@@ -14,12 +17,8 @@ class AppBlock(private val context: Context): Tool() {
         "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
 
     // Parámetros
-    private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
         // Solicitados al User
         private var indefinitelyBlockedPackages: MutableSet<String> = mutableSetOf()
-
-    // Persistencia
-    private val prefs = context.getSharedPreferences("AppBlockPrefs", Context.MODE_PRIVATE)
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // appPackages: MutableSet<String>
@@ -44,40 +43,32 @@ class AppBlock(private val context: Context): Tool() {
             )
         }
 
-        // Guarda los parámetros y Actualiza el AppBlockService
+        // Guarda los parámetros
         saveParameters()
-        val intent = Intent(".APPBLOCK_BROADCAST")
-        intent.putExtra("message", "Activate")
-        context.sendBroadcast(intent)
+
+        // Envia un blockRequest a AppBlockService
+        val blockRequest = BlockRequest(
+            ToolType.INDIFINITELY,
+            "Mensaje AppBlock",
+            null,
+            false
+        )
+        context.sendBroadcast(Intent("BLOCK_REQUEST").putExtra(TODO()))
     }
 
     override fun deactivate() {
         active = false
-        // Frena el servicio
-        val intent = Intent(".APPBLOCK_BROADCAST")
-        intent.putExtra("message", "Deactivate")
-        context.sendBroadcast(intent)
+
+        // Envia un unblockRequest a AppBlockService
+        context.sendBroadcast(Intent("UNBLOCK_REQUEST").putExtra(TODO()))
     }
 
     // Métodos
-    public fun blockApps(appPackages: MutableSet<String>, blockRequest: BlockRequest) { // Usado internamente por otras clases
-        // Asocia el BlockRequest a cada paquete proporcionado y lo guarda en blockedPackages
-        for (appPackage in appPackages) {
-            // Crea un nuevo MutableMap<ToolType, BlockRequest> de ser necesario y asigna el nuevo blockRequest a su clave correspondiente
-            blockedPackages.getOrPut(appPackage) { mutableMapOf() }[blockRequest.tool] = blockRequest
-        }
-
-        // Guarda los parámetros y Actualiza el AppBlockService
-        saveParameters()
-        val intent = Intent(".APPBLOCK_BROADCAST")
-        intent.putExtra("message", "BlockApps")
-        context.sendBroadcast(intent)
-    }
-
     private fun saveParameters() {
-        val jsonString = Json.encodeToString(blockedPackages)
-        prefs.edit().putString("blockedPackages", jsonString).apply()
-
-        prefs.edit().putStringSet("indefinitelyBlockedPackages", indefinitelyBlockedPackages).apply()
+        val prefs = context.getSharedPreferences("AppBlockPrefs", Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putStringSet("indefinitelyBlockedPackages", indefinitelyBlockedPackages)
+            apply()
+        }
     }
 }
