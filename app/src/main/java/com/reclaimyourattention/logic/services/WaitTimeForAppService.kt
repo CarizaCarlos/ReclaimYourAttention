@@ -11,11 +11,13 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.reclaimyourattention.R
-import com.reclaimyourattention.logic.receivers.AppBlockRequestReceiver
 import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
-import com.reclaimyourattention.logic.receivers.ScreenReceiver
 import com.reclaimyourattention.models.BlockRequest
 import com.reclaimyourattention.models.ToolType
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.seconds
 
 class WaitTimeForAppService: Service() {
     // Parámetros
@@ -49,14 +51,17 @@ class WaitTimeForAppService: Service() {
             onAppChanged = { packageName ->
                 // Verifica si el paquete está marcado
                 if (packageName in blockedPackages) {
-                    // Realiza una solicitúd de bloqueo a AppBlockService
+                    // Envia un blockRequest a AppBlockService
                     val blockRequest = BlockRequest(
-                        ToolType.WAIT_TIME,
+                        ToolType.INDEFINITELY,
                         "Mensaje WaitTime",
-                        TODO(),
-                        true
+                        Clock.System.now()+waitSeconds.seconds,
+                        false
                     )
-                    sendBroadcast(Intent("BLOCK_REQUEST").putExtra(TODO()))
+                    val intent = Intent("BLOCK_REQUEST")
+                        .putExtra("blockedPackages", Json.encodeToString(mutableSetOf(packageName)))
+                        .putExtra("blockRequest", Json.encodeToString(blockRequest))
+                    sendBroadcast(intent)
 
                     Log.d("WaitTimeForAppService", "Se Envía Solicitúd para Bloquear: $packageName por $waitSeconds seg") // Log
                 }
@@ -101,15 +106,11 @@ class WaitTimeForAppService: Service() {
         unregisterReceiver(foregroundAppReceiver)
         foregroundAppReceiver = null
 
-        // Realiza una solicitúd de desbloqueo a AppBlockService
-        val unblockRequest = BlockRequest( TODO("Quizás es mejor hacer un dataclass separado o enviar un mutable set")
-            ToolType.WAIT_TIME,
-            "Mensaje WaitTime",
-            TODO(),
-            true
-        )
-
-        TODO("Enviar broadcast")
+        // Envia un unblockRequest a AppBlockService por si existe algún bloqueo activo
+        val intent = Intent("UNBLOCK_REQUEST")
+            .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
+            .putExtra("toolType", ToolType.WAIT_TIME)
+        sendBroadcast(intent)
 
         Log.d("WaitTimeForAppService", "Servicio Terminado") // Log
     }

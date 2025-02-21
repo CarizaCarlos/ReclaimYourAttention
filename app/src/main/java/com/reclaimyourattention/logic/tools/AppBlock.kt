@@ -2,13 +2,9 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
-import com.reclaimyourattention.logic.services.AppBlockService
-import com.reclaimyourattention.logic.services.RestRemindersService
-import com.reclaimyourattention.logic.services.WaitTimeForAppService
 import com.reclaimyourattention.models.BlockRequest
 import com.reclaimyourattention.models.ToolType
 import kotlinx.serialization.json.Json
-import java.time.LocalDateTime
 
 class AppBlock(private val context: Context): Tool() {
     // Variables Superclase
@@ -29,6 +25,13 @@ class AppBlock(private val context: Context): Tool() {
             && parameters[0] is MutableSet<*>
             && (parameters[0] as MutableSet<*>).all { it is String })
         {
+            // Envia un unblockRequest a AppBlockService para resetear las restricciones actuales
+            val intent = Intent("UNBLOCK_REQUEST")
+                .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
+                .putExtra("toolType", ToolType.INDEFINITELY)
+            context.sendBroadcast(intent)
+
+            // Actualzia los parámetros
             val appPackages = (parameters[0] as MutableSet<*>)
                 .map { it as String }
                 .toMutableSet()
@@ -48,19 +51,25 @@ class AppBlock(private val context: Context): Tool() {
 
         // Envia un blockRequest a AppBlockService
         val blockRequest = BlockRequest(
-            ToolType.INDIFINITELY,
+            ToolType.INDEFINITELY,
             "Mensaje AppBlock",
             null,
             false
         )
-        context.sendBroadcast(Intent("BLOCK_REQUEST").putExtra(TODO()))
+        val intent = Intent("BLOCK_REQUEST")
+            .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
+            .putExtra("blockRequest", Json.encodeToString(blockRequest))
+        context.sendBroadcast(intent)
     }
 
     override fun deactivate() {
         active = false
 
         // Envia un unblockRequest a AppBlockService
-        context.sendBroadcast(Intent("UNBLOCK_REQUEST").putExtra(TODO()))
+        val intent = Intent("UNBLOCK_REQUEST")
+            .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
+            .putExtra("toolType", ToolType.INDEFINITELY)
+        context.sendBroadcast(intent)
     }
 
     // Métodos

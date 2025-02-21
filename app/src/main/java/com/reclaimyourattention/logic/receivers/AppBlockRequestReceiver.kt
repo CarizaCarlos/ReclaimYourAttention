@@ -11,7 +11,6 @@ class AppBlockRequestReceiver(
 ): BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == "BLOCK_REQUEST") {
-            TODO("Pasar el json del dataclass al lambda")
             Log.d("AppBlockRequestReceiver", "BlockRequest Recibido.")
             onBlockRequest()
         }

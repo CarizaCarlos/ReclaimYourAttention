@@ -19,6 +19,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Desugaring
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -33,6 +36,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+
+        // Desugaring
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -44,7 +52,9 @@ android {
 
 dependencies {
 
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime) // Kotlinx Date Time
+    coreLibraryDesugaring(libs.desugar.jdk.libs) // Desugaring
+    implementation(libs.kotlinx.serialization.json) // Kotlin Serialization
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
