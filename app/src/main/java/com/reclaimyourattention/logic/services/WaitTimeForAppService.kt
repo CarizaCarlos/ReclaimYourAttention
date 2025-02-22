@@ -52,13 +52,13 @@ class WaitTimeForAppService: Service() {
                 if (packageName in blockedPackages) {
                     // Envia un blockRequest a AppBlockService
                     val blockRequest = BlockRequest(
-                        ToolType.INDEFINITELY,
                         "Mensaje WaitTime",
                         Clock.System.now()+waitSeconds.seconds,
                         false
                     )
                     val intent = Intent("BLOCK_REQUEST")
                         .putExtra("blockedPackages", Json.encodeToString(mutableSetOf(packageName)))
+                        .putExtra("toolType", Json.encodeToString(ToolType.WAIT_TIME))
                         .putExtra("blockRequest", Json.encodeToString(blockRequest))
                     sendBroadcast(intent)
 

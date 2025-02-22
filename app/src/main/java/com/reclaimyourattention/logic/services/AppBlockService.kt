@@ -14,6 +14,7 @@ import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.AppBlockRequestReceiver
 import com.reclaimyourattention.models.BlockRequest
 import com.reclaimyourattention.models.ToolType
+import com.reclaimyourattention.models.toolTypePriority
 
 class AppBlockService: Service() {
     // Parámetros
@@ -40,12 +41,12 @@ class AppBlockService: Service() {
 
         // Inicializa el Receiver para escuchar block y unblock requests
         appBlockRequestReceiver = AppBlockRequestReceiver(
-            onBlockRequest = { appPackages, request ->
+            onBlockRequest = { appPackages, tool, request ->
                 // Asocia el BlockRequest a cada paquete proporcionado y lo guarda en blockedPackages
                 for (appPackage in appPackages) {
                     // Crea un nuevo MutableMap<ToolType, BlockRequest> de ser necesario y asigna el nuevo blockRequest a su clave correspondiente
                     Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
-                    blockedPackages.getOrPut(appPackage) { mutableMapOf() }[request.tool] = request
+                    blockedPackages.getOrPut(appPackage) { mutableMapOf() }[tool] = request
                     Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
                 }
             },
@@ -91,4 +92,25 @@ class AppBlockService: Service() {
     override fun onDestroy() {}
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    // Métodos
+    fun getHighestPriorityBlockRequest(packageName: String): BlockRequest? {
+        // Verifica que el paquete esté bloqueado
+        if (!blockedPackages.containsKey(packageName)) {
+            return null
+        }
+
+        // Itera dentro de los requests y retorna el válido de mayor prioridad
+        for (toolType in toolTypePriority) {
+            val blockRequest = blockedPackages[packageName]?.get(toolType)
+            if (blockRequest != null) {
+                return blockRequest
+            }
+        }
+
+        // Elimina la clave que no contenga bloqueos válidos
+        blockedPackages.remove(packageName)
+
+        return null
+    }
 }

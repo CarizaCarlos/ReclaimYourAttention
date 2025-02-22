@@ -51,13 +51,13 @@ class AppBlock(private val context: Context): Tool() {
 
         // Envia un blockRequest a AppBlockService
         val blockRequest = BlockRequest(
-            ToolType.INDEFINITELY,
             "Mensaje AppBlock",
             null,
             false
         )
         val intent = Intent("BLOCK_REQUEST")
             .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
+            .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
             .putExtra("blockRequest", Json.encodeToString(blockRequest))
         context.sendBroadcast(intent)
     }
