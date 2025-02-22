@@ -64,7 +64,7 @@ class RestRemindersService: Service() {
         }
 
         // Inicializa los handler
-        handlerThread = HandlerThread("RestRemindersThread").apply { start() }
+        handlerThread = HandlerThread("RestRemindersServiceThread").apply { start() }
         handler = Handler(handlerThread!!.looper)
 
         // Inicializa el Receiver para escuchar cuando se enciende y apaga la pantalla
