@@ -5,7 +5,7 @@ import android.content.Intent
 import android.util.Log
 import com.reclaimyourattention.logic.services.WaitTimeForAppService
 
-class WaitTimeForApp(private val context: Context): Tool(){
+class WaitTimeForApp(private val context: Context): Tool() {
     // Variables Superclase
     override var title: String = "Tiempo de Espera para Ingresar a Apps"
     override var description: String =
