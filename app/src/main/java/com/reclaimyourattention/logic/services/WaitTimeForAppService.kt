@@ -33,17 +33,15 @@ class WaitTimeForAppService: Service() {
     override fun onCreate() {
         // Se crea el canal de notificación
         val notificationManager = getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "wait_time_for_app", // ID del canal
-                "Tiempo de Espera para Apps", // Nombre visible
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "..."
-            }
-
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            "wait_time_for_app", // ID del canal
+            "Tiempo de Espera para Apps", // Nombre visible
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "..."
         }
+
+        notificationManager.createNotificationChannel(channel)
 
         // Inicializa el Receiver para escuchar cuando se cambia de app
         foregroundAppReceiver = ForegroundAppReceiver(

@@ -12,10 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.reclaimyourattention.models.BlockRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BlockedAppScreen(navController: NavController) {
+fun BlockedAppScreen(request: BlockRequest) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Blocked App") }) }
     ) { paddingValues ->

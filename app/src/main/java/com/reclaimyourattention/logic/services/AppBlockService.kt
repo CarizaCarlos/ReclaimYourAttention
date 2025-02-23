@@ -5,13 +5,31 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
+import android.graphics.PixelFormat
+import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.savedstate.SavedStateRegistry
+import androidx.savedstate.SavedStateRegistryController
+import androidx.savedstate.SavedStateRegistryOwner
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.AppBlockRequestReceiver
 import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
@@ -19,8 +37,10 @@ import com.reclaimyourattention.models.BlockRequest
 import com.reclaimyourattention.models.ToolType
 import com.reclaimyourattention.models.toolTypePriority
 import kotlinx.datetime.Clock
-import kotlinx.serialization.json.Json
-import kotlin.time.Duration.Companion.seconds
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeViewModelStoreOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.reclaimyourattention.ui.BlockedAppScreen
 
 class AppBlockService: Service() {
     // Parámetros
@@ -34,6 +54,9 @@ class AppBlockService: Service() {
     private var activePackageName: String? = null
     private var activeRequest: BlockRequest? = null
     private var isUpdateRunnableActive = false
+    val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
+    private var overlayView: View? = null
+    private val mainHandler = Handler(Looper.getMainLooper()) // Handler del Hilo Principal
 
     // Runnables
     private val updateRunnable = object : Runnable {
@@ -50,7 +73,8 @@ class AppBlockService: Service() {
                         activeRequest = highestPriorityRequest
 
                         // Bloquea la app usando el nuevo request
-                        Log.d("AppBlockService", "Se bloqueó el paquete: $activePackageName usando $${activeRequest}") // Log TODO()
+                        showBlockScreen(highestPriorityRequest)
+                        Log.d("AppBlockService", "Se bloqueó el paquete: $activePackageName usando $${activeRequest}") // Log
                     }
 
                     // Programa la siguiente llamada y se detiene
@@ -61,7 +85,8 @@ class AppBlockService: Service() {
 
             // Si el paquete no existe o no contiene requests válidos
             // Desbloquea la app
-            Log.d("AppBlockService", "Se desbloquea $activePackageName") // Log TODO()
+            hideBlockScreen()
+            Log.d("AppBlockService", "Se desbloquea $activePackageName") // Log
 
             // Desactiva el Runnable
             isUpdateRunnableActive = false
@@ -71,19 +96,19 @@ class AppBlockService: Service() {
 
     // Métodos Superclase
     override fun onCreate() {
+        super.onCreate()
+
         // Se crea el canal de notificación
         val notificationManager = getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "app_block", // ID del canal
-                "Bloqueo Indefinido de Apps", // Nombre visible
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "..."
-            }
-
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            "app_block", // ID del canal
+            "Bloqueo Indefinido de Apps", // Nombre visible
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "..."
         }
+
+        notificationManager.createNotificationChannel(channel)
 
         // Inicializa los handler
         handlerThread = HandlerThread("AppBlockServiceThread").apply { start() }
@@ -125,8 +150,8 @@ class AppBlockService: Service() {
                     val highestPriorityRequest = getHighestPriorityRequest(packageName)
                     if (highestPriorityRequest != null) {
                         // Bloquea la app
-
-                        Log.d("AppBlockService", "Se bloqueó el paquete: $packageName usando $${highestPriorityRequest}") // Log TODO()
+                        showBlockScreen(highestPriorityRequest)
+                        Log.d("AppBlockService", "Se bloqueó el paquete: $packageName usando $${highestPriorityRequest}") // Log
 
                         // Actualiza activeRequest y activa el updateRunnable
                         activeRequest = highestPriorityRequest
@@ -222,5 +247,77 @@ class AppBlockService: Service() {
         blockedPackages.remove(packageName)
 
         return null
+    }
+
+    private fun showBlockScreen(request: BlockRequest) {
+        if (overlayView != null) return
+        mainHandler.post {
+            val params = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                PixelFormat.TRANSLUCENT
+            )
+
+            val composeView = ComposeView(this)
+            composeView.setContent {
+                BlockedAppScreen(request)
+            }
+
+            // Trick The ComposeView into thinking we are tracking lifecycle
+            val viewModelStore = ViewModelStore()
+            val lifecycleOwner = MyLifecycleOwner()
+            lifecycleOwner.performRestore(null)
+            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            composeView.setViewTreeLifecycleOwner(lifecycleOwner)
+
+            val viewModelStoreOwner = object : ViewModelStoreOwner {
+                override val viewModelStore: ViewModelStore = viewModelStore
+            }
+            composeView.setViewTreeViewModelStoreOwner(viewModelStoreOwner)
+
+            composeView.setViewTreeSavedStateRegistryOwner(lifecycleOwner)
+
+            windowManager.addView(composeView, params)
+            overlayView = composeView
+        }
+    }
+
+    private fun hideBlockScreen() {
+        overlayView?.let {
+            windowManager.removeView(it)
+            overlayView = null
+        }
+    }
+
+    internal class MyLifecycleOwner : SavedStateRegistryOwner {
+        private var mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
+        private var mSavedStateRegistryController: SavedStateRegistryController = SavedStateRegistryController.create(this)
+
+        val isInitialized: Boolean
+            get() = true
+
+        override val lifecycle: Lifecycle get() = mLifecycleRegistry
+
+        fun setCurrentState(state: Lifecycle.State) {
+            mLifecycleRegistry.currentState = state
+        }
+
+        fun handleLifecycleEvent(event: Lifecycle.Event) {
+            mLifecycleRegistry.handleLifecycleEvent(event)
+        }
+
+        override val savedStateRegistry = mSavedStateRegistryController.savedStateRegistry
+
+        fun performRestore(savedState: Bundle?) {
+            mSavedStateRegistryController.performRestore(savedState)
+        }
+
+        fun performSave(outBundle: Bundle) {
+            mSavedStateRegistryController.performSave(outBundle)
+        }
     }
 }

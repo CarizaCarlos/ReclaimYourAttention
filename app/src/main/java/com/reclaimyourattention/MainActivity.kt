@@ -1,7 +1,10 @@
 package com.reclaimyourattention
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -69,6 +72,8 @@ class MainActivity : ComponentActivity() {
                         Text("Activar AppBlockService")
                     }
                 }
+                // Permiso pa mostrar sobre otras apps
+                requestOverlayPermission(this)
             }
         }
     }
@@ -87,5 +92,15 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     ReclaimYourAttentionTheme {
         Greeting("Android")
+    }
+}
+
+fun requestOverlayPermission(context: Context) {
+    if (!Settings.canDrawOverlays(context)) {
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${context.packageName}")
+        )
+        context.startActivity(intent)
     }
 }

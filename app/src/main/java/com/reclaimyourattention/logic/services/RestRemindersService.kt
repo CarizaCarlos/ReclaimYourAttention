@@ -51,17 +51,15 @@ class RestRemindersService: Service() {
     override fun onCreate() {
         // Se crea el canal de notificación
         val notificationManager = getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "rest_reminders", // ID del canal
-                "Recordatorios de Descanso", // Nombre visible
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notificaciones para recordarte descansar del celular"
-            }
-
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            "rest_reminders", // ID del canal
+            "Recordatorios de Descanso", // Nombre visible
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Notificaciones para recordarte descansar del celular"
         }
+
+        notificationManager.createNotificationChannel(channel)
 
         // Inicializa los handler
         handlerThread = HandlerThread("RestRemindersServiceThread").apply { start() }

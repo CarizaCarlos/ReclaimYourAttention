@@ -13,15 +13,12 @@ android {
 
     defaultConfig {
         applicationId = "com.reclaimyourattention"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // Desugaring
-        multiDexEnabled = true
     }
 
     buildTypes {
@@ -36,9 +33,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-
-        // Desugaring
-        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -50,8 +44,13 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.runtime.ktx.v270)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.savedstate)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.kotlinx.datetime) // Kotlinx Date Time
-    coreLibraryDesugaring(libs.desugar.jdk.libs) // Desugaring
+    implementation(libs.androidx.lifecycle.service)
     implementation(libs.kotlinx.serialization.json) // Kotlin Serialization
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
