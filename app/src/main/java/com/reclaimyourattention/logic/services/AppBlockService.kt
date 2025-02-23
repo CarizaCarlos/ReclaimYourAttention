@@ -53,7 +53,7 @@ class AppBlockService: Service() {
 
     // Runnables
     private val updateRunnable = object : Runnable {
-        val refreshSeconds: Int = 5
+        val refreshSeconds: Int = 1
         override fun run() {
             // Verifica si el paquete está en blockedPackages
             if (activePackageName != null && blockedPackages.containsKey(activePackageName)) {
@@ -154,20 +154,23 @@ class AppBlockService: Service() {
         // Inicializa el Receiver para escuchar cuando se cambia de app
         foregroundAppReceiver = ForegroundAppReceiver(
             onAppChanged = { packageName ->
-                activePackageName = packageName
-                // Verifica si el paquete está en blockedPackages
-                if (blockedPackages.containsKey(packageName)) {
-                    // Obtiene el request de más alta prioridad
-                    val highestPriorityRequest = getHighestPriorityRequest(packageName)
-                    if (highestPriorityRequest != null) {
-                        // Bloquea la app
-                        showBlockScreen(highestPriorityRequest)
-                        Log.d("AppBlockService", "Se bloqueó el paquete: $packageName usando $${highestPriorityRequest}") // Log
+                // Verifica que no se trate de si misma
+                if (packageName != "com.reclaimyourattention") {
+                    activePackageName = packageName
+                    // Verifica si el paquete está en blockedPackages
+                    if (blockedPackages.containsKey(packageName)) {
+                        // Obtiene el request de más alta prioridad
+                        val highestPriorityRequest = getHighestPriorityRequest(packageName)
+                        if (highestPriorityRequest != null) {
+                            // Bloquea la app
+                            showBlockScreen(highestPriorityRequest)
+                            Log.d("AppBlockService", "Se bloqueó el paquete: $packageName usando $${highestPriorityRequest}") // Log
 
-                        // Actualiza activeRequest y activa el updateRunnable
-                        activeRequest = highestPriorityRequest
-                        handler?.postDelayed(updateRunnable, updateRunnable.refreshSeconds.toLong()*1000)
-                        isUpdateRunnableActive = true
+                            // Actualiza activeRequest y activa el updateRunnable
+                            activeRequest = highestPriorityRequest
+                            handler?.postDelayed(updateRunnable, updateRunnable.refreshSeconds.toLong()*1000)
+                            isUpdateRunnableActive = true
+                        }
                     }
                 }
             }

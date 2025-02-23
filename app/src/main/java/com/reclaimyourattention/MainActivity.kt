@@ -18,7 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.reclaimyourattention.logic.services.AppBlockService
-import com.reclaimyourattention.logic.services.WaitTimeForAppService
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import com.reclaimyourattention.ui.MainScreen
@@ -31,8 +30,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val r: RestReminders = RestReminders(this)
-        val w: WaitTimeForApp = WaitTimeForApp(this)
+        val r = RestReminders(this)
+        val w = WaitTimeForApp(this)
         val context = this
 
         setContent {
@@ -55,7 +54,7 @@ class MainActivity : ComponentActivity() {
                         Text("Desactivar RestRemidners")
                     }
                     Button(onClick = {
-                        val waitSeconds: Int = 10
+                        val waitSeconds = 5
                         val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome","com.google.android.youtube")
                         w.activate(waitSeconds, blockedPackages)
                     }) {
@@ -71,6 +70,7 @@ class MainActivity : ComponentActivity() {
                     }) {
                         Text("Activar AppBlockService")
                     }
+                    OpenAccessibilitySettingsButton(context)
                 }
                 // Permiso pa mostrar sobre otras apps
                 requestOverlayPermission(this)
@@ -103,4 +103,18 @@ fun requestOverlayPermission(context: Context) {
         )
         context.startActivity(intent)
     }
+}
+
+@Composable
+fun OpenAccessibilitySettingsButton(context: Context) {
+    Button(onClick = { openAccessibilitySettings(context) }) {
+        Text("Activar servicio de accesibilidad")
+    }
+}
+
+fun openAccessibilitySettings(context: Context) {
+    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+    context.startActivity(intent)
 }

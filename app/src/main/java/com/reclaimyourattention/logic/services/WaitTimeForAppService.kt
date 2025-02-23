@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -24,7 +23,7 @@ class WaitTimeForAppService: Service() {
         private var waitSeconds: Int = 20
         private var blockedPackages: MutableSet<String> = mutableSetOf()
         // Inmutables
-        private val cooldownSeconds: Int = 30
+        //private val cooldownSeconds: Int = 30
 
     // Variables de Control
     private var foregroundAppReceiver: ForegroundAppReceiver? = null
@@ -52,7 +51,7 @@ class WaitTimeForAppService: Service() {
                     val blockRequest = BlockRequest(
                         "Mensaje WaitTime",
                         Clock.System.now()+waitSeconds.seconds,
-                        false
+                        true
                     )
                     val intent = Intent("BLOCK_REQUEST")
                         .putExtra("blockedPackages", Json.encodeToString(mutableSetOf(packageName)))
