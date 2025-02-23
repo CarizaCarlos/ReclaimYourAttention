@@ -14,20 +14,13 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import com.reclaimyourattention.R
@@ -49,14 +42,14 @@ class AppBlockService: Service() {
     // Variables de Control
     private var appBlockRequestReceiver: AppBlockRequestReceiver? = null
     private var foregroundAppReceiver: ForegroundAppReceiver? = null
+    private val mainHandler = Handler(Looper.getMainLooper()) // Handler del Hilo Principal
     private var handlerThread: HandlerThread? = null
     private var handler: Handler? = null
     private var activePackageName: String? = null
     private var activeRequest: BlockRequest? = null
     private var isUpdateRunnableActive = false
-    val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
+    private val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
     private var overlayView: View? = null
-    private val mainHandler = Handler(Looper.getMainLooper()) // Handler del Hilo Principal
 
     // Runnables
     private val updateRunnable = object : Runnable {
@@ -91,6 +84,24 @@ class AppBlockService: Service() {
             // Desactiva el Runnable
             isUpdateRunnableActive = false
             activeRequest = null
+        }
+    }
+
+    // Clases Internas
+    internal class MyLifecycleOwner : SavedStateRegistryOwner {
+        private var mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
+        private var mSavedStateRegistryController: SavedStateRegistryController = SavedStateRegistryController.create(this)
+
+        override val lifecycle: Lifecycle get() = mLifecycleRegistry
+
+        fun handleLifecycleEvent(event: Lifecycle.Event) {
+            mLifecycleRegistry.handleLifecycleEvent(event)
+        }
+
+        override val savedStateRegistry = mSavedStateRegistryController.savedStateRegistry
+
+        fun performRestore(savedState: Bundle?) {
+            mSavedStateRegistryController.performRestore(savedState)
         }
     }
 
@@ -214,32 +225,26 @@ class AppBlockService: Service() {
                 if (blockedPackages[packageName]?.get(toolType) != null) {
                     // Verifica que unblockTime no sea null
                     val blockRequest = blockedPackages[packageName]!![toolType]!!
-                    if (blockRequest.unblockTime == null) {
+                    if (blockRequest.unblockTime != null) {
+                        // Verifica que no sea un INDEFINITELY con Fecha para evitar que se cancele innecesariamente, lanzar un Log.e
+                        if (toolType == ToolType.INDEFINITELY) {
+                            Log.e("AppBlockService", "El paquete $packageName contiene un request tipo INDEFINITELY con unblockTime no null")
+                            return blockRequest
+                        }
+
+                        // Verifica que la fecha no haya pasado
+                        if (blockRequest.unblockTime > Clock.System.now()) {
+                            return blockRequest
+                        }
+                    } else {
                         // Si es de un toolType INDEFINITELY retorna el request
                         if (toolType == ToolType.INDEFINITELY) {
                             return blockRequest
                         }
-                        // Elimina el request con unblockTime inválido
-                        blockedPackages[packageName]?.remove(toolType)
                     }
-
-                    // Verifica que no sea un INDEFINITELY con Fecha para evitar que se cancele innecesariamente, lanzar un Log.e
-                    if (toolType == ToolType.INDEFINITELY) {
-                        Log.e("AppBlockService", "El paquete $packageName contiene un request tipo INDEFINITELY con unblockTime no null")
-                        return blockRequest
-                    }
-
-                    // Verifica que la fecha no haya pasado
-                    if (blockRequest.unblockTime!! > Clock.System.now()) {
-                        return blockRequest
-                    } else {
-                        // Elimina el request
-                        blockedPackages[packageName]?.remove(toolType)
-                    }
-                } else {
-                    // Elimina el request
-                    blockedPackages[packageName]?.remove(toolType)
                 }
+                // Elimina el request con unblockTime inválido
+                blockedPackages[packageName]?.remove(toolType)
             }
         }
 
@@ -290,34 +295,6 @@ class AppBlockService: Service() {
         overlayView?.let {
             windowManager.removeView(it)
             overlayView = null
-        }
-    }
-
-    internal class MyLifecycleOwner : SavedStateRegistryOwner {
-        private var mLifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
-        private var mSavedStateRegistryController: SavedStateRegistryController = SavedStateRegistryController.create(this)
-
-        val isInitialized: Boolean
-            get() = true
-
-        override val lifecycle: Lifecycle get() = mLifecycleRegistry
-
-        fun setCurrentState(state: Lifecycle.State) {
-            mLifecycleRegistry.currentState = state
-        }
-
-        fun handleLifecycleEvent(event: Lifecycle.Event) {
-            mLifecycleRegistry.handleLifecycleEvent(event)
-        }
-
-        override val savedStateRegistry = mSavedStateRegistryController.savedStateRegistry
-
-        fun performRestore(savedState: Bundle?) {
-            mSavedStateRegistryController.performRestore(savedState)
-        }
-
-        fun performSave(outBundle: Bundle) {
-            mSavedStateRegistryController.performSave(outBundle)
         }
     }
 }
