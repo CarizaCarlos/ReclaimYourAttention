@@ -23,7 +23,7 @@ class WaitTimeForAppService: Service() {
         private var waitSeconds: Int = 20
         private var blockedPackages: MutableSet<String> = mutableSetOf()
         // Inmutables
-        //private val cooldownSeconds: Int = 30
+        //private val cooldownSeconds: Int = 30 TODO()
 
     // Variables de Control
     private var foregroundAppReceiver: ForegroundAppReceiver? = null
