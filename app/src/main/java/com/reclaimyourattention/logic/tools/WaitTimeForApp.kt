@@ -7,14 +7,25 @@ import com.reclaimyourattention.logic.services.WaitTimeForAppService
 
 class WaitTimeForApp(private val context: Context): Tool() {
     // Variables Superclase
-    override var title: String = "Tiempo de Espera para Ingresar a Apps"
-    override var description: String =
-        "Evita que se ingrese inmediatamente a una app, antes se deberá esperar el tiempo establecido " +
-        "mientras se muestra mensaje de reflexión"
+    override val title: String
+        get() = "Tiempo de Espera para Ingresar a Apps"
+    override val description: String
+        get() = "Evita que se ingrese inmediatamente a una app, antes se deberá esperar el tiempo establecido " +
+                "mientras se muestra mensaje de reflexión"
 
     // Parámetros Solicitados al User
-    private var waitSeconds: Int = 20
-    private var blockedPackages: MutableSet<String> = mutableSetOf()
+    companion object {
+        private var waitSeconds: Int = 20
+        private var blockedPackages: MutableSet<String> = mutableSetOf()
+
+        fun getWaitSeconds(): Int {
+            return waitSeconds
+        }
+
+        fun getBlockedPackages(): MutableSet<String> {
+            return blockedPackages
+        }
+    }
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // waitSeconds: Int, blockedPackages: MutableSet<String>

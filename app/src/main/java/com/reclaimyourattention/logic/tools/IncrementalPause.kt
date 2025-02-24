@@ -6,13 +6,24 @@ import com.reclaimyourattention.logic.services.LimitTimePerSessionService
 
 class IncrementalPause(private val context: Context): Tool() {
     // Variables Superclase
-    override var title: String = "Incrementar la Pausa"
-    override var description: String =
-        "Incrementa el tiempo para acceder a una app entre más se interactúe con el teléfono mientras se espera el desbloqueo"
+    override val title: String
+        get() = "Incrementar la Pausa"
+    override val description: String
+        get() = "Incrementa el tiempo para acceder a una app entre más se interactúe con el teléfono mientras se espera el desbloqueo"
 
     // Parámetros Solicitados al User
-    private var incrementalSeconds = 3
-    private var blockedPackages: MutableSet<String> = mutableSetOf()
+    companion object {
+        private var incrementalSeconds: Int = 3
+        private var blockedPackages: MutableSet<String> = mutableSetOf()
+
+        fun getIncrementalSeconds(): Int {
+            return incrementalSeconds
+        }
+
+        fun getBlockedPackages(): MutableSet<String> {
+            return blockedPackages
+        }
+    }
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // TODO() activeMinutesTreshold: Int, cooldownMinutes: Int, blockedPackages: MutableSet<String>

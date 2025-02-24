@@ -6,12 +6,19 @@ import com.reclaimyourattention.logic.services.RestRemindersService
 
 class RestReminders(private val context: Context): Tool() {
     // Variables Superclase
-    override var title: String = "Recordatorios para Descansar del Teléfono"
-    override var description: String =
-        "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
+    override val title: String
+        get() = "Recordatorios para Descansar del Teléfono"
+    override val description: String
+        get() = "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
 
     // Parámetros Solicitados al User
-    private var activityMinutesThreshold: Int = 25
+    companion object {
+        private var activityMinutesThreshold: Int = 25
+
+        fun getActivityMinutesThreshold(): Int {
+            return activityMinutesThreshold
+        }
+    }
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // activityMinutesThreshold: Int

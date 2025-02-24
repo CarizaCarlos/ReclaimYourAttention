@@ -123,7 +123,7 @@ class RestRemindersService: Service() {
 
     override fun onDestroy() {
         handler?.removeCallbacksAndMessages(null)
-        unregisterReceiver(screenReceiver)
+        screenReceiver?.let { unregisterReceiver(it) }
         handlerThread?.quitSafely()
         handler = null
         handlerThread = null

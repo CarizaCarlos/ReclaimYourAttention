@@ -8,13 +8,21 @@ import kotlinx.serialization.json.Json
 
 class AppBlock(private val context: Context): Tool() {
     // Variables Superclase
-    override var title: String = "Recordatorios para Descansar del Teléfono"
-    override var description: String =
-        "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
+    override val title: String
+        get() = "Recordatorios para Descansar del Teléfono"
 
-    // Parámetros
-        // Solicitados al User
-        private var indefinitelyBlockedPackages: MutableSet<String> = mutableSetOf()
+    override val description: String
+        get() = "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
+
+    // Parámetros Solicitados al User
+    companion object {
+        private var blockedPackages: MutableSet<String> = mutableSetOf()
+
+        fun getBlockedPackages(): MutableSet<String> {
+            return blockedPackages
+        }
+    }
+
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // appPackages: MutableSet<String>
@@ -27,7 +35,7 @@ class AppBlock(private val context: Context): Tool() {
         {
             // Envia un unblockRequest a AppBlockService para resetear las restricciones actuales
             val intent = Intent("UNBLOCK_REQUEST")
-                .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
+                .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
                 .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
             context.sendBroadcast(intent)
 
@@ -36,7 +44,7 @@ class AppBlock(private val context: Context): Tool() {
                 .map { it as String }
                 .toMutableSet()
 
-            indefinitelyBlockedPackages = appPackages
+            blockedPackages = appPackages
         } else {
             throw IllegalArgumentException(
                 "Error en activate(): Se esperaba exactamente 1 parámetro de tipo MutableSet<String>, " +
@@ -56,7 +64,7 @@ class AppBlock(private val context: Context): Tool() {
             false
         )
         val intent = Intent("BLOCK_REQUEST")
-            .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
+            .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
             .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
             .putExtra("blockRequest", Json.encodeToString(blockRequest))
         context.sendBroadcast(intent)
@@ -67,7 +75,7 @@ class AppBlock(private val context: Context): Tool() {
 
         // Envia un unblockRequest a AppBlockService
         val intent = Intent("UNBLOCK_REQUEST")
-            .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
+            .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
             .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
         context.sendBroadcast(intent)
     }
@@ -76,7 +84,7 @@ class AppBlock(private val context: Context): Tool() {
     private fun saveParameters() {
         val prefs = context.getSharedPreferences("AppBlockPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
-            putStringSet("indefinitelyBlockedPackages", indefinitelyBlockedPackages)
+            putStringSet("indefinitelyBlockedPackages", blockedPackages)
             apply()
         }
     }

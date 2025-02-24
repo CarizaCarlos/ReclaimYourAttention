@@ -2,9 +2,10 @@ package com.reclaimyourattention.logic.tools
 
 class Diagnostic() : Tool(){
     //Variables Superclase
-    override var title: String = "Diagnóstico"
-    override var description: String =
-        "Realizar un cuestionario con el fin de entender los habitos del usuario"
+    override val title: String
+        get() = "Diagnóstico"
+    override val description: String
+        get() = "Realizar un cuestionario con el fin de entender los habitos del usuario"
 
 
     //Atributos

@@ -9,7 +9,14 @@ import android.view.accessibility.AccessibilityEvent
 
 class ForegroundAppTracker: AccessibilityService() {
     // Variables de Control
-    private var lastPackageName: String? = null
+    companion object {
+        @Volatile // Para asegurar la visibilidad entre hilos
+        private var lastPackageName: String? = null
+
+        fun getLastPackageName(): String? {
+            return lastPackageName
+        }
+    }
 
     // Métodos Superclase
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -42,5 +49,10 @@ class ForegroundAppTracker: AccessibilityService() {
 
     override fun onServiceConnected() {
         Log.d("ForegroundAppTracker", "Servicio de accesibilidad conectado")
+    }
+
+    // Getters
+    fun getLastPackageName(): String? {
+        return lastPackageName
     }
 }

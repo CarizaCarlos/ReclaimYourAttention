@@ -6,14 +6,29 @@ import com.reclaimyourattention.logic.services.LimitTimePerSessionService
 
 class LimitTimePerSession(private val context: Context): Tool() {
     // Variables Superclase
-    override var title: String = "Limitar el Tiempo por Sesión"
-    override var description: String =
-        "Impide periodos prolongados e ininterrumpidos de uso"
+    override val title: String
+        get() = "Limitar el Tiempo por Sesión"
+    override val description: String
+        get() = "Impide periodos prolongados e ininterrumpidos de uso"
 
     // Parámetros Solicitados al User
-    private var activeMinutesTreshold: Int = 25
-    private var cooldownMinutes: Int = 15
-    private var blockedPackages: MutableSet<String> = mutableSetOf()
+    companion object {
+        private var activeMinutesTreshold: Int = 25
+        private var cooldownMinutes: Int = 15
+        private var blockedPackages: MutableSet<String> = mutableSetOf()
+
+        fun getActiveMinutesTreshold(): Int {
+            return activeMinutesTreshold
+        }
+
+        fun getCooldownMinutes(): Int {
+            return cooldownMinutes
+        }
+
+        fun getBlockedPackages(): MutableSet<String> {
+            return blockedPackages
+        }
+    }
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // activeMinutesTreshold: Int, cooldownMinutes: Int, blockedPackages: MutableSet<String>

@@ -2,9 +2,18 @@ package com.reclaimyourattention.logic.tools
 
 class BlockingScheduleForApp: Tool()  {
     //Variables Superclase
-    override var title: String = "Horario de bloqueo de apps"
-    override var description: String =
-        "Bloqueará ciertas apps en determinados momentos del día"
+    override val title: String
+        get() = "Horario de bloqueo de apps"
+    override val description: String
+        get() = "Bloqueará ciertas apps en determinados momentos del día"
+
+    companion object {
+        private var blockedPackages: MutableSet<String> = mutableSetOf()
+
+        fun getBlockedPackages(): MutableSet<String> {
+            return blockedPackages
+        }
+    }
 
     override fun activate(vararg parameters: Any) {
         TODO("Not yet implemented")
