@@ -21,14 +21,14 @@ class AppBlock(private val context: Context): Tool() {
         active = true
 
         // Verifica la entrada y actualiza los parámetros
-        if (parameters.size == 2
+        if (parameters.size == 1
             && parameters[0] is MutableSet<*>
             && (parameters[0] as MutableSet<*>).all { it is String })
         {
             // Envia un unblockRequest a AppBlockService para resetear las restricciones actuales
             val intent = Intent("UNBLOCK_REQUEST")
                 .putExtra("blockedPackages", Json.encodeToString(indefinitelyBlockedPackages))
-                .putExtra("toolType", ToolType.INDEFINITELY)
+                .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
             context.sendBroadcast(intent)
 
             // Actualzia los parámetros

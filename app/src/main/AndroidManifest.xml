@@ -18,6 +18,13 @@
         android:theme="@style/Theme.ReclaimYourAttention"
         tools:targetApi="31">
         <service
+            android:name=".logic.services.LimitTimePerSessionService"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="explanation_for_special_use" />
+        </service>
+        <service
             android:name=".logic.services.AppBlockService"
             android:foregroundServiceType="specialUse">
             <property
@@ -52,7 +59,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ReclaimYourAttention">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

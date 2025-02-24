@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.reclaimyourattention.models.BlockRequest
-import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,14 +30,9 @@ fun BlockedAppScreen(request: BlockRequest) {
             Text(request.message)
 
             // Countdown (Si lo requiere)
-            if (request.showCountdown) {
-                request.unblockTime?.let { CountdownTimer(it) }
-            }
+            //if (request.showCountdown) {
+                //request.unblockTime?.let { CountdownTimer(it) }
+            //}
         }
     }
-}
-
-@Composable
-fun CountdownTimer(targetTime: Instant) {
-    TODO()
 }

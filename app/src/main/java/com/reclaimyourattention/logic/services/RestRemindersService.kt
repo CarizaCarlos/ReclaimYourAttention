@@ -40,7 +40,7 @@ class RestRemindersService: Service() {
                 activitySeconds = 0 // Reinicia el conteo
             }
 
-            handler?.postDelayed(this, refreshSeconds.toLong()*1000) // Vuelve a ejecutar luego de 15 segundos
+            handler?.postDelayed(this, refreshSeconds.toLong()*1000) // Vuelve a ejecutar luego de refreshSeconds
         }
     }
 
@@ -74,7 +74,7 @@ class RestRemindersService: Service() {
                 Log.d("RestRemindersService", "Se Inicia el Conteo") // Log
             },
             onScreenOff = {
-                // Frena el conteo
+                // Frena el conteo TODO("Verificar que exista un callback que borrar, porque osino se activa el handler innecesariamente")
                 handler?.removeCallbacksAndMessages(null)
 
                 // Reinicia la cuenta si se supera el threshold

@@ -18,6 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.reclaimyourattention.logic.services.AppBlockService
+import com.reclaimyourattention.logic.tools.AppBlock
+import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import com.reclaimyourattention.ui.MainScreen
@@ -32,6 +34,8 @@ class MainActivity : ComponentActivity() {
 
         val r = RestReminders(this)
         val w = WaitTimeForApp(this)
+        val s = LimitTimePerSession(this)
+        val b = AppBlock(this)
         val context = this
 
         setContent {
@@ -43,6 +47,7 @@ class MainActivity : ComponentActivity() {
                     composable("usage") { UsageScreen(navController) }
                 }
                 Column {
+                    // Reminders
                     Button(onClick = {
                         r.activate(1)
                     }) {
@@ -53,9 +58,11 @@ class MainActivity : ComponentActivity() {
                     }) {
                         Text("Desactivar RestRemidners")
                     }
+
+                    // Wait Time
                     Button(onClick = {
                         val waitSeconds = 5
-                        val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome","com.google.android.youtube")
+                        val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome")
                         w.activate(waitSeconds, blockedPackages)
                     }) {
                         Text("Activar WaitTimeForApp")
@@ -65,13 +72,46 @@ class MainActivity : ComponentActivity() {
                     }) {
                         Text("Desactivar WaitTimeForApp")
                     }
+
+                    // Time Sesh
+                    Button(onClick = {
+                        val activeMinutesTreshold = 1
+                        val cooldownMinutes = 1
+                        val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome","com.google.android.youtube")
+                        s.activate(activeMinutesTreshold, cooldownMinutes, blockedPackages)
+                    }) {
+                        Text("Activar LimitTimePerSession")
+                    }
+                    Button(onClick = {
+                        s.deactivate()
+                    }) {
+                        Text("Desactivar LimitTimePerSession")
+                    }
+
+                    // AppBlock
+                    Button(onClick = {
+                        val blockedPackages = mutableSetOf("com.google.android.apps.messaging")
+                        b.activate(blockedPackages)
+                    }) {
+                        Text("Activar AppBlock")
+                    }
+                    Button(onClick = {
+                        b.deactivate()
+                    }) {
+                        Text("Desactivar AppBlock")
+                    }
+
+                    // AppBlock Service
                     Button(onClick = {
                         context.startService(Intent(context, AppBlockService::class.java))
                     }) {
                         Text("Activar AppBlockService")
                     }
+
+                    // Accesibility Service Activation
                     OpenAccessibilitySettingsButton(context)
                 }
+
                 // Permiso pa mostrar sobre otras apps
                 requestOverlayPermission(this)
             }
