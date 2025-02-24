@@ -35,7 +35,7 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.reclaimyourattention.ui.BlockedAppScreen
 
-class AppBlockService: Service() {
+class AppBlockService: Service() { // TODO("Al hacer click en el menu de nav del dispositivo, se quita el bloqueo")
     // Parámetros
     private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest?>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
 
@@ -45,7 +45,7 @@ class AppBlockService: Service() {
     private val mainHandler = Handler(Looper.getMainLooper()) // Handler del Hilo Principal
     private var handlerThread: HandlerThread? = null
     private var handler: Handler? = null
-    private var activePackageName: String? = null
+    private var activePackageName: String? = null // TODO("Quizás es mejor conseguirlo directamente del Tracker, ya hay una funcion pa eso")
     private var activeRequest: BlockRequest? = null
     private var isUpdateRunnableActive = false
     private val windowManager get() = getSystemService(WINDOW_SERVICE) as WindowManager
@@ -132,7 +132,7 @@ class AppBlockService: Service() {
                 for (appPackage in appPackages) {
                     // Crea un nuevo MutableMap<ToolType, BlockRequest> de ser necesario y asigna el nuevo blockRequest a su clave correspondiente
                     blockedPackages.getOrPut(appPackage) { mutableMapOf() }[tool] = request
-                    Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
+                    Log.d("AppBlockService", "BlockRequest, Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
                 }
 
                 // Verifica si al paquete en pantalla se le aplicó un nuevo bloqueo y si no hay un updateRunnable que atrape los cambios
@@ -146,7 +146,7 @@ class AppBlockService: Service() {
                 // Elimina el blockRequest asignado a la tool de cada paquete
                 for (appPackage in appPackages) {
                     blockedPackages[appPackage]?.remove(tool)
-                    Log.d("AppBlockService", "Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
+                    Log.d("AppBlockService", "UnblockRequest, Bloqueos de $appPackage: ${blockedPackages[appPackage]}") // Log
                 }
             }
         )
@@ -214,7 +214,17 @@ class AppBlockService: Service() {
         return START_STICKY
     }
 
-    override fun onDestroy() {}
+    override fun onDestroy() {
+        mainHandler.removeCallbacksAndMessages(null)
+        handler?.removeCallbacksAndMessages(null)
+        handlerThread?.quitSafely()
+        foregroundAppReceiver?.let { unregisterReceiver(it) }
+        appBlockRequestReceiver?.let { unregisterReceiver(it) }
+        handler = null
+        handlerThread = null
+        foregroundAppReceiver = null
+        appBlockRequestReceiver = null
+    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
