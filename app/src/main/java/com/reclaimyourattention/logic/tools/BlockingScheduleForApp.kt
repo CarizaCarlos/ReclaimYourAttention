@@ -6,7 +6,6 @@ class BlockingScheduleForApp: Tool()  {
         get() = "Horario de bloqueo de apps"
     override val description: String
         get() = "Bloqueará ciertas apps en determinados momentos del día"
-
     companion object {
         private var blockedPackages: MutableSet<String> = mutableSetOf()
 
