@@ -192,7 +192,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     val context = LocalContext.current
-
+    //A
     val r = RestReminders(context)
     val w = WaitTimeForApp(context)
     val s = LimitTimePerSession(context)
