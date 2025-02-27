@@ -47,8 +47,8 @@ fun MainScreen(navController: NavController) {
     }
 }
 
+@Preview(showSystemUi = true)
 @Composable
-@Preview
 fun previewTask() {
     ReclaimYourAttentionTheme {
         task("App Name", 60)

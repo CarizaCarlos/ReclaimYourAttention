@@ -58,9 +58,6 @@ fun previewTool() {
 @Composable
 fun tool(appName: String, timeUsed: Int) {
     Row {
-        Image(
-            painterResource(R.drawable.ic_launcher_foreground),
-            ""
-        )
+
     }
 }

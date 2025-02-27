@@ -8,7 +8,10 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +30,17 @@ import com.reclaimyourattention.ui.ToolsScreen
 import com.reclaimyourattention.ui.UsageScreen
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import kotlinx.datetime.format.Padding
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,71 +50,19 @@ class MainActivity : ComponentActivity() {
         val w = WaitTimeForApp(this)
         val s = LimitTimePerSession(this)
         val b = AppBlock(this)
+
         val context = this
 
         setContent {
             ReclaimYourAttentionTheme {
-                val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "main") {
-                    composable("main") { MainScreen(navController) }
-                    composable("tools") { ToolsScreen(navController) }
-                    composable("usage") { UsageScreen(navController) }
-                }
-                Column {
-                    // Reminders
-                    Button(onClick = {
-                        r.activate(1)
-                    }) {
-                        Text("Activar RestRemidners")
-                    }
-                    Button(onClick = {
-                        r.deactivate()
-                    }) {
-                        Text("Desactivar RestRemidners")
-                    }
-
-                    // Wait Time
-                    Button(onClick = {
-                        val waitSeconds = 5
-                        val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome")
-                        w.activate(waitSeconds, blockedPackages)
-                    }) {
-                        Text("Activar WaitTimeForApp")
-                    }
-                    Button(onClick = {
-                        w.deactivate()
-                    }) {
-                        Text("Desactivar WaitTimeForApp")
-                    }
-
-                    // Time Sesh
-                    Button(onClick = {
-                        val activeMinutesTreshold = 1
-                        val cooldownMinutes = 1
-                        val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome","com.google.android.youtube")
-                        s.activate(activeMinutesTreshold, cooldownMinutes, blockedPackages)
-                    }) {
-                        Text("Activar LimitTimePerSession")
-                    }
-                    Button(onClick = {
-                        s.deactivate()
-                    }) {
-                        Text("Desactivar LimitTimePerSession")
-                    }
-
-                    // AppBlock
-                    Button(onClick = {
-                        val blockedPackages = mutableSetOf("com.google.android.apps.messaging")
-                        b.activate(blockedPackages)
-                    }) {
-                        Text("Activar AppBlock")
-                    }
-                    Button(onClick = {
-                        b.deactivate()
-                    }) {
-                        Text("Desactivar AppBlock")
-                    }
-
+                Naveg()
+                Column (modifier = Modifier.fillMaxWidth().padding(top=100.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,)
+                {
+                    BodyContent(r,w)
+                    BotonAppBlock(b)
+                    BotonLimitTimePerSession(s)
                     // AppBlock Service
                     Button(onClick = {
                         context.startService(Intent(context, AppBlockService::class.java))
@@ -119,19 +81,133 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+@Composable
+fun Naveg(){
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "main") {
+        composable("main") { MainScreen(navController) }
+        composable("tools") { ToolsScreen(navController) }
+        composable("usage") { UsageScreen(navController) }
+        //RestReminder
+    }
+}
+
+
+@Composable
+fun BodyContent(
+    r: RestReminders,
+    w: WaitTimeForApp,
+    ){
+    Column {
+        //RestReminder
+
+        // Estado para rastrear si está activado
+        var isReminderActive by remember { mutableStateOf(false) }
+        Button(onClick = {
+            if (isReminderActive) {
+                r.deactivate() // Llamar a la función de desactivación
+            } else {
+                r.activate() // Llamar a la función de activación
+            }
+            isReminderActive = !isReminderActive // Cambiar el estado
+        }) {
+            Text(if (isReminderActive) "Desactivar RestReminders" else "Activar RestReminders")
+        }
+
+        // Wait Time
+        var isWaitTimeActive by remember { mutableStateOf(false) }
+        Button(onClick = {
+            val waitSeconds = 5
+            val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome")
+
+            if (isWaitTimeActive) {
+                w.deactivate() // Llamar a la función de desactivación
+            } else {
+                w.activate(waitSeconds, blockedPackages) // Llamar a la función de activación
+            }
+            isWaitTimeActive = !isWaitTimeActive // Cambiar el estado
+        }) {
+            Text(if (isWaitTimeActive) "Desactivar WaitTimeForApp" else "Activar WaitTimeForApp")
+        }
+    }
+}
+
+@Composable
+fun BotonLimitTimePerSession(s: LimitTimePerSession) {
+    // Time Sesh
+    var isSeshActive by remember { mutableStateOf(false) } // Estado para rastrear si está activado
+    Button(onClick = {
+        val activeMinutesThreshold = 1
+        val cooldownMinutes = 1
+        val blockedPackages: MutableSet<String> = mutableSetOf(
+            "com.android.chrome",
+            "com.google.android.youtube"
+        )
+
+        if (isSeshActive) {
+            s.deactivate() // Desactiva si ya está activo
+        } else {
+            s.activate(
+                activeMinutesThreshold,
+                cooldownMinutes,
+                blockedPackages
+            ) // Activa si está inactivo
+        }
+        isSeshActive = !isSeshActive // Cambiar el estado
+    }) {
+        Text(if (isSeshActive) "Desactivar LimitTimePerSession" else "Activar LimitTimePerSession")
+    }
+}
+@Composable
+fun BotonAppBlock(b: AppBlock){
+    // AppBlock
+    var isAppBlockActive by remember { mutableStateOf(false) } // Estado para rastrear si está activado
+
+    Button(onClick = {
+        val blockedPackages = mutableSetOf("com.google.android.apps.messaging")
+
+        if (isAppBlockActive) {
+            b.deactivate() // Desactiva si ya está activo
+        } else {
+            b.activate(blockedPackages) // Activa si está inactivo
+        }
+        isAppBlockActive = !isAppBlockActive // Cambia el estado
+    }) {
+        Text(if (isAppBlockActive) "Desactivar AppBlock" else "Activar AppBlock")
+    }
+}
+
+
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
-        modifier = modifier
+            text = "Hello $name!",
+            modifier = modifier
+
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun GreetingPreview() {
+    val context = LocalContext.current
+
+    val r = RestReminders(context)
+    val w = WaitTimeForApp(context)
+    val s = LimitTimePerSession(context)
+    val b = AppBlock(context)
     ReclaimYourAttentionTheme {
-        Greeting("Android")
+        Naveg()
+        Column(modifier = Modifier.fillMaxWidth().padding(top=90.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+            BodyContent(r, w)
+            BotonAppBlock(b)
+            BotonLimitTimePerSession(s)
+
+        }
     }
 }
 
