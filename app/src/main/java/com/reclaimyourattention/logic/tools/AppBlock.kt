@@ -2,6 +2,7 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.reclaimyourattention.models.BlockRequest
 import com.reclaimyourattention.models.ToolType
 import kotlinx.serialization.json.Json
@@ -68,6 +69,8 @@ class AppBlock(private val context: Context): Tool() {
             .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
             .putExtra("blockRequest", Json.encodeToString(blockRequest))
         context.sendBroadcast(intent)
+
+        Log.d("AppBlock", "Se Envía Solicitúd para Bloquear: $blockedPackages indefinidamente") // Log
     }
 
     override fun deactivate() {

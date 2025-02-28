@@ -108,7 +108,7 @@ fun BodyContent(
             if (isReminderActive) {
                 r.deactivate() // Llamar a la función de desactivación
             } else {
-                r.activate() // Llamar a la función de activación
+                r.activate(1) // Llamar a la función de activación
             }
             isReminderActive = !isReminderActive // Cambiar el estado
         }) {

@@ -4,7 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BlockRequest(
+data class BlockRequest (
     val message: String,
     val unblockTime: Instant?,
     val showCountdown: Boolean

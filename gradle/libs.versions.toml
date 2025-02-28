@@ -1,7 +1,9 @@
 [versions]
 activityComposeVersion = "1.9.2"
 agp = "8.8.1"
+androidxComposeBom = "2025.02.00"
 appcompat = "1.7.0"
+composeBomVersion = "2024.10.01"
 desugar_jdk_libs = "2.1.4"
 kotlin = "2.0.0"
 coreKtx = "1.10.1"
@@ -24,6 +26,8 @@ savedstate = "1.2.1"
 androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
 androidx-activity-compose-v192 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-compose-bom-v20241001 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+androidx-compose-bom-v20250200 = { module = "androidx.compose:compose-bom", version.ref = "androidxComposeBom" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 androidx-lifecycle-runtime-ktx-v270 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }

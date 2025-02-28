@@ -32,20 +32,22 @@ class BlockingScheduleForAppService: Service() {
     private val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     // Runnables
-    private val programAlarms = Runnable {
-        // Identifica que día de la semana es hoy
-        val today = Clock.System.now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .date
-            .dayOfWeek
+    private val programAlarms = object : Runnable {
+        override fun run() {
+            // Identifica que día de la semana es hoy
+            val today = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date
+                .dayOfWeek
 
-        // Itera los bloques de tiempo de hoy
-        blockingSchedule[today]?.forEachIndexed { index, timeBlock ->
-            val (inicio, fin) = timeBlock
-            // Verifica si el bloque no ha pasado ya
-            if (fin > Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())) {
-                // Si no ha pasado programa su bloqueo
-                scheduleBlock(inicio, fin, index)
+            // Itera los bloques de tiempo de hoy
+            blockingSchedule[today]?.forEachIndexed { index, timeBlock ->
+                val (inicio, fin) = timeBlock
+                // Verifica si el bloque no ha pasado ya
+                if (fin > Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())) {
+                    // Si no ha pasado programa su bloqueo
+                    scheduleBlock(inicio, fin, index)
+                }
             }
         }
     }
