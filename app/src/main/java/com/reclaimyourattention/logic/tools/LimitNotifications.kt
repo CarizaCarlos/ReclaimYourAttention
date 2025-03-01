@@ -2,23 +2,30 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.logic.services.LimitNotificationsService
 
 object LimitNotifications: Tool() {
     //Variables Superclase
-    override val title: String
-        get() = "Limitar notificaciones"
-    override val description: String
-        get() = "Limitará las apps que pueden enviar notificaciones"
+    override val title: String = "Limitar notificaciones"
+    override val description: String = "Limitará las apps que pueden enviar notificaciones"
+    override val storageKey: String = "LimitNotifications"
 
     // Parámetros Solicitados al User
     var blockedPackages: MutableSet<String> = mutableSetOf()
         private set
 
-    //Parámetros
-    private var appsToLimit: String = "Va a ser un ArrayList"
-
     //Métodos Superclase
+    override fun saveState() {
+        super.saveState()
+        StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+    }
+
+    override fun loadState() {
+        super.loadState()
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+    }
+
     override fun activate(vararg parameters: Any) { // blockedPackages: MutableSet<String>
         active = true
 

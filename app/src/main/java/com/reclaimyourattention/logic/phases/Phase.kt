@@ -1,10 +1,13 @@
 package com.reclaimyourattention.logic.phases
 
+import com.reclaimyourattention.logic.StorageManager
+
 abstract class Phase {
     // Atributos
     abstract val title: String
     abstract val description: String
     abstract val weeks: List<Set<Task>>
+    protected abstract val storageKey: String
 
     // Variables de Control
     var currentWeekIndex: Int = 0
@@ -13,6 +16,16 @@ abstract class Phase {
         protected set
 
     // Métodos
+    fun saveState() {
+        StorageManager.saveInt("${storageKey}_currentWeekIndex", currentWeekIndex)
+        StorageManager.saveStringSet("${storageKey}_completedTaskIDs", completedTaskIDs)
+    }
+
+    fun loadState() {
+        currentWeekIndex = StorageManager.getInt("${storageKey}_currentWeekIndex", currentWeekIndex)
+        completedTaskIDs = StorageManager.getStringSet("${storageKey}_completedTaskIDs", completedTaskIDs) as MutableSet<String>
+    }
+
     fun areRequirementsMet(): Boolean {
         return currentWeekIndex >= weeks.size
     }

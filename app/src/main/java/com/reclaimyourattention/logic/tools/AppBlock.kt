@@ -4,23 +4,32 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.logic.services.BlockRequest
 import com.reclaimyourattention.logic.services.ToolType
 import kotlinx.serialization.json.Json
 
 object AppBlock: Tool() {
     // Variables Superclase
-    override val title: String
-        get() = "Recordatorios para Descansar del Teléfono"
-
-    override val description: String
-        get() = "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
+    override val title: String = "Recordatorios para Descansar del Teléfono"
+    override val description: String = "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
+    override val storageKey: String = "AppBlock"
 
     // Parámetros Solicitados al User
     var blockedPackages: MutableSet<String> = mutableSetOf()
         private set
 
     // Métodos Superclase
+    override fun saveState() {
+        super.saveState()
+        StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+    }
+
+    override fun loadState() {
+        super.loadState()
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+    }
+
     override fun activate(vararg parameters: Any) { // appPackages: MutableSet<String>
         active = true
 

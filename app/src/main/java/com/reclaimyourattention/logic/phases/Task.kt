@@ -11,6 +11,3 @@ data class Task(
     val isMandatory: Boolean,
     val readingMinutes: Int
 )
-
-// Solo servirán para almacenar las características inmutables de una tarea,
-// su estado (completo / incompleto) se guarda en las fases

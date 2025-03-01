@@ -7,6 +7,7 @@ object ReintroductionPhase: Phase() {
     override val weeks: List<Set<Task>> = listOf(
         ReintroductionTasks.week1
     )
+    override val storageKey = "ReintroductionPhase"
 }
 
 object ReintroductionTasks {

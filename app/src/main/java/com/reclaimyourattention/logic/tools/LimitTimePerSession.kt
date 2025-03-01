@@ -3,24 +3,38 @@ package com.reclaimyourattention.logic.tools
 import android.content.Context
 import android.content.Intent
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.logic.services.LimitTimePerSessionService
 
 object LimitTimePerSession: Tool() {
     // Variables Superclase
-    override val title: String
-        get() = "Limitar el Tiempo por Sesión"
-    override val description: String
-        get() = "Impide periodos prolongados e ininterrumpidos de uso"
+    override val title: String = "Limitar el Tiempo por Sesión"
+    override val description: String = "Impide periodos prolongados e ininterrumpidos de uso"
+    override val storageKey: String = "LimitTimePerSession"
 
     // Parámetros Solicitados al User
+    var blockedPackages: MutableSet<String> = mutableSetOf()
+        private set
     var activeMinutesTreshold: Int = 25
         private set
     var cooldownMinutes: Int = 15
         private set
-    var blockedPackages: MutableSet<String> = mutableSetOf()
-        private set
 
     // Métodos Superclase
+    override fun saveState() {
+        super.saveState()
+        StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+        StorageManager.saveInt("${storageKey}_activeMinutesTreshold", activeMinutesTreshold)
+        StorageManager.saveInt("${storageKey}_cooldownMinutes", cooldownMinutes)
+    }
+
+    override fun loadState() {
+        super.loadState()
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        activeMinutesTreshold = StorageManager.getInt("${storageKey}_activeMinutesTreshold", activeMinutesTreshold)
+        cooldownMinutes = StorageManager.getInt("${storageKey}_cooldownMinutes", cooldownMinutes)
+    }
+
     override fun activate(vararg parameters: Any) { // activeMinutesTreshold: Int, cooldownMinutes: Int, blockedPackages: MutableSet<String>
         active = true
 

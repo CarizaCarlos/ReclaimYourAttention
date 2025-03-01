@@ -10,6 +10,18 @@ object PhaseManager {
     private var currentPhaseIndex: Int = 0
 
     // Métodos
+    fun saveStates() {
+        for (phase in phases) {
+            phase.saveState()
+        }
+    }
+
+    fun loadStates() {
+        for (phase in phases) {
+            phase.loadState()
+        }
+    }
+
     fun getCurrentPhase(): Phase? = phases.getOrNull(currentPhaseIndex)
 
     fun canAdvancePhase(): Boolean = getCurrentPhase()?.areRequirementsMet() ?: false

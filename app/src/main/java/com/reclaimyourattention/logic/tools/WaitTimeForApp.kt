@@ -3,23 +3,35 @@ package com.reclaimyourattention.logic.tools
 import android.content.Context
 import android.content.Intent
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.logic.services.WaitTimeForAppService
 
 object WaitTimeForApp: Tool() {
     // Variables Superclase
-    override val title: String
-        get() = "Tiempo de Espera para Ingresar a Apps"
-    override val description: String
-        get() = "Evita que se ingrese inmediatamente a una app, antes se deberá esperar el tiempo establecido " +
-                "mientras se muestra mensaje de reflexión"
+    override val title: String = "Tiempo de Espera para Ingresar a Apps"
+    override val description: String = "Evita que se ingrese inmediatamente a una app, antes se deberá esperar el tiempo establecido " +
+        "mientras se muestra mensaje de reflexión"
+    override val storageKey: String = "WaitTimeForApp"
 
     // Parámetros Solicitados al User
-    var waitSeconds: Int = 20
-        private set
     var blockedPackages: MutableSet<String> = mutableSetOf()
+        private set
+    var waitSeconds: Int = 20
         private set
 
     // Métodos Superclase
+    override fun saveState() {
+        super.saveState()
+        StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+        StorageManager.saveInt("${storageKey}_waitSeconds", waitSeconds)
+    }
+
+    override fun loadState() {
+        super.loadState()
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        waitSeconds = StorageManager.getInt("${storageKey}_waitSeconds", waitSeconds)
+    }
+
     override fun activate(vararg parameters: Any) { // waitSeconds: Int, blockedPackages: MutableSet<String>
         active = true
 

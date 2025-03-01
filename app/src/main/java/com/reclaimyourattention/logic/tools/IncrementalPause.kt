@@ -3,14 +3,14 @@ package com.reclaimyourattention.logic.tools
 import android.content.Context
 import android.content.Intent
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.logic.services.LimitTimePerSessionService
 
 object IncrementalPause: Tool() {
     // Variables Superclase
-    override val title: String
-        get() = "Incrementar la Pausa"
-    override val description: String
-        get() = "Incrementa el tiempo para acceder a una app entre más se interactúe con el teléfono mientras se espera el desbloqueo"
+    override val title: String = "Incrementar la Pausa"
+    override val description: String = "Incrementa el tiempo para acceder a una app entre más se interactúe con el teléfono mientras se espera el desbloqueo"
+    override val storageKey: String = "IncrementalPause"
 
     // Parámetros Solicitados al User
     var blockedPackages: MutableSet<String> = mutableSetOf()
@@ -19,6 +19,18 @@ object IncrementalPause: Tool() {
         private set
 
     // Métodos Superclase
+    override fun saveState() {
+        super.saveState()
+        StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+        StorageManager.saveInt("${storageKey}_incrementalSeconds", incrementalSeconds)
+    }
+
+    override fun loadState() {
+        super.loadState()
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        incrementalSeconds = StorageManager.getInt("${storageKey}_incrementalSeconds", incrementalSeconds)
+    }
+
     override fun activate(vararg parameters: Any) { // TODO() activeMinutesTreshold: Int, cooldownMinutes: Int, blockedPackages: MutableSet<String>
         active = true
 

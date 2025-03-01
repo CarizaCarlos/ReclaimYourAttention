@@ -1,13 +1,13 @@
 package com.reclaimyourattention.logic.tools
 
+import com.reclaimyourattention.logic.StorageManager
 import kotlin.math.min
 
 object LimitTimeInApp: Tool() {
     //Variables Superclase
-    override val title: String
-        get() = "Limitar tiempo en aplicación"
-    override val description: String
-        get() = "Limitar el Tiempo en total en pantalla teniendo en cuenta el uso de las apps"
+    override val title: String = "Limitar tiempo en aplicación"
+    override val description: String = "Limitar el Tiempo en total en pantalla teniendo en cuenta el uso de las apps"
+    override val storageKey: String = "LimitTimeInApp"
 
     // Parámetros Solictados al user
     var blockedPackages: MutableSet<String> = mutableSetOf()
@@ -78,6 +78,20 @@ object LimitTimeInApp: Tool() {
     }
 
     // Métodos Superclase
+    override fun saveState() {
+        super.saveState()
+        StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+        StorageManager.saveInt("${storageKey}_maxTotalMinutes", maxTotalMinutes)
+        StorageManager.saveInt("${storageKey}_maxForEachMinutes", maxForEachMinutes)
+    }
+
+    override fun loadState() {
+        super.loadState()
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        maxTotalMinutes = StorageManager.getInt("${storageKey}_maxTotalMinutes", maxTotalMinutes)
+        maxForEachMinutes = StorageManager.getInt("${storageKey}_maxForEachMinutes", maxForEachMinutes)
+    }
+
     override fun activate(vararg parameters: Any) {
         TODO("Not yet implemented")
 

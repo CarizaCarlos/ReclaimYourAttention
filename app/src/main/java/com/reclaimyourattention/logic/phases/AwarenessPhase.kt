@@ -3,12 +3,13 @@ package com.reclaimyourattention.logic.phases
 import com.reclaimyourattention.logic.services.ToolType
 
 object AwarenessPhase: Phase() {
-    // Atributos
+    // Atributos Superclase
     override val title: String = "Fase de Concientización"
     override val description: String = ""
     override val weeks: List<Set<Task>> = listOf(
         AwarenessTasks.week1
     )
+    override val storageKey = "AwarenessPhase"
 }
 
 object AwarenessTasks {

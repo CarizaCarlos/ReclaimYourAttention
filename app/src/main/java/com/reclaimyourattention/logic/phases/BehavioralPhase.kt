@@ -7,8 +7,7 @@ object BehavioralPhase: Phase() {
     override val weeks: List<Set<Task>> = listOf(
         BehavioralTasks.week1
     )
-
-    // Métodos
+    override val storageKey = "BehavioralPhase"
 }
 
 object BehavioralTasks {
