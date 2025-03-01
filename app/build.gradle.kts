@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom.v20250200))
+    implementation(libs.androidx.runtime.livedata)
     androidTestImplementation(platform(libs.androidx.compose.bom.v20250200))
     implementation(libs.material3)
     implementation(libs.ui.tooling.preview)

@@ -2,13 +2,15 @@ package com.reclaimyourattention.logic.phases
 
 abstract class Phase {
     // Atributos
-    protected abstract val title: String
-    protected abstract val description: String
-    protected abstract val weeks: List<Set<Task>>
+    abstract val title: String
+    abstract val description: String
+    abstract val weeks: List<Set<Task>>
 
     // Variables de Control
-    private var currentWeekIndex: Int = 0
-    private var completedTaskIDs: MutableSet<String> = mutableSetOf()
+    var currentWeekIndex: Int = 0
+        protected set
+    var completedTaskIDs: MutableSet<String> = mutableSetOf()
+        protected set
 
     // Métodos
     fun areRequirementsMet(): Boolean {
@@ -25,7 +27,7 @@ abstract class Phase {
             .filter { it.isMandatory }
             .all { completedTaskIDs.contains(it.id) }
         if (allMandatoryCompleted) {
-            currentWeekIndex++
+            currentWeekIndex++ // TODO("Añadir el limitante de tiempo a las weeks, osea que de verdad tenga que pasar 1 week, o quizas en el manager")
         }
     }
 
@@ -33,5 +35,8 @@ abstract class Phase {
         completedTaskIDs.remove(id)
     }
 
-    fun getCurrentWeekIndex(): Int = currentWeekIndex
+    fun getIncompleteTasksForCurrentWeek(): List<Task> {
+        val currentWeekTasks = weeks.getOrNull(currentWeekIndex) ?: emptySet()
+        return currentWeekTasks.filter { !completedTaskIDs.contains(it.id) }
+    }
 }

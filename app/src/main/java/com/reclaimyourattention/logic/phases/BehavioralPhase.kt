@@ -1,14 +1,14 @@
 package com.reclaimyourattention.logic.phases
 
-class BehavioralPhase: Phase() {
+object BehavioralPhase: Phase() {
     // Atributos
-    override val title: String
-        get() = "Fase Conductual"
-    override val description: String
-        get() = TODO()
+    override val title: String = "Fase Conductual"
+    override val description: String = ""
     override val weeks: List<Set<Task>> = listOf(
         BehavioralTasks.week1
     )
+
+    // Métodos
 }
 
 object BehavioralTasks {
@@ -16,7 +16,7 @@ object BehavioralTasks {
         Task(
             id = "01",
             title = "¿Qué es la Terapía Conductual?",
-            body = TODO(),
+            body = "", // TODO()
             tool = null,
             taskPrerrequisitesID = null,
             isMandatory = true,
