@@ -1,7 +1,5 @@
 package com.reclaimyourattention.logic.phases
 
-import com.reclaimyourattention.models.Task
-
 abstract class Phase {
     // Atributos
     protected abstract val title: String

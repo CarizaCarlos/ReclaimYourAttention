@@ -3,8 +3,8 @@ package com.reclaimyourattention.logic.tools
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.reclaimyourattention.models.BlockRequest
-import com.reclaimyourattention.models.ToolType
+import com.reclaimyourattention.logic.services.BlockRequest
+import com.reclaimyourattention.logic.services.ToolType
 import kotlinx.serialization.json.Json
 
 class AppBlock(private val context: Context): Tool() {

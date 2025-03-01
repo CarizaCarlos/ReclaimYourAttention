@@ -9,8 +9,6 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import com.reclaimyourattention.models.BlockRequest
-import com.reclaimyourattention.models.ToolType
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
@@ -18,7 +16,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
-import kotlin.time.Duration.Companion.seconds
 
 class BlockingScheduleForAppService: Service() {
     // Parámetros Solicitados al user

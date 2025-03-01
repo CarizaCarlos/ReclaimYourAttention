@@ -11,8 +11,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
-import com.reclaimyourattention.models.BlockRequest
-import com.reclaimyourattention.models.ToolType
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds

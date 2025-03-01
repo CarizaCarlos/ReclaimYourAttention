@@ -11,7 +11,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.reclaimyourattention.models.BlockRequest
+import com.reclaimyourattention.logic.services.BlockRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

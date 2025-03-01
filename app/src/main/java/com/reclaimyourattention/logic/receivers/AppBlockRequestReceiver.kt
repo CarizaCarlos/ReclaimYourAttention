@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.reclaimyourattention.models.BlockRequest
-import com.reclaimyourattention.models.ToolType
+import com.reclaimyourattention.logic.services.BlockRequest
+import com.reclaimyourattention.logic.services.ToolType
 import kotlinx.serialization.json.Json.Default.decodeFromString
 
 class AppBlockRequestReceiver(

@@ -26,9 +26,6 @@ import androidx.savedstate.SavedStateRegistryOwner
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.AppBlockRequestReceiver
 import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
-import com.reclaimyourattention.models.BlockRequest
-import com.reclaimyourattention.models.ToolType
-import com.reclaimyourattention.models.toolTypePriority
 import kotlinx.datetime.Clock
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner

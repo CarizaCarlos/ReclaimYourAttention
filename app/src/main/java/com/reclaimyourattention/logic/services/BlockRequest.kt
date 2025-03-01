@@ -1,4 +1,4 @@
-package com.reclaimyourattention.models
+package com.reclaimyourattention.logic.services
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -11,7 +11,7 @@ data class BlockRequest (
 )
 
 @Serializable
-enum class ToolType {WAIT_TIME, SCHEDULED_BLOCK, LIMIT_DAILY, LIMIT_SESSION, INDEFINITELY}
+enum class ToolType {WAIT_TIME, SCHEDULED_BLOCK, LIMIT_DAILY, LIMIT_SESSION, INDEFINITELY, DIAGNOSTIC}
 
 // Prioridad de las Herramientas
 val toolTypePriority = listOf(
