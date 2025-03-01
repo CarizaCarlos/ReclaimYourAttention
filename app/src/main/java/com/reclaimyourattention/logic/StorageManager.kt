@@ -2,7 +2,7 @@ package com.reclaimyourattention.logic
 
 import android.content.Context
 
-class StorageManager(context: Context) {
+object StorageManager {
     // Métodos
     public fun save() {
 

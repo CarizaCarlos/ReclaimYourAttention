@@ -1,6 +1,6 @@
 package com.reclaimyourattention.logic.tools
 
-class Diagnostic() : Tool(){
+object Diagnostic : Tool(){
     //Variables Superclase
     override val title: String
         get() = "Diagnóstico"

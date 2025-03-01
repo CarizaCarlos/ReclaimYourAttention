@@ -59,37 +59,32 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val r = RestReminders(this)
-        val w = WaitTimeForApp(this)
-        val s = LimitTimePerSession(this)
-        val b = AppBlock(this)
-
         val context = this
 
         setContent {
             ReclaimYourAttentionTheme {
-                PhaseScreen()
-//                Naveg()
-//                Column (modifier = Modifier.fillMaxWidth().padding(top=100.dp),
-//                    verticalArrangement = Arrangement.Center,
-//                    horizontalAlignment = Alignment.CenterHorizontally,)
-//                {
-//                    BodyContent(r,w)
-//                    BotonAppBlock(b)
-//                    BotonLimitTimePerSession(s)
-//                    // AppBlock Service
-//                    Button(onClick = {
-//                        context.startService(Intent(context, AppBlockService::class.java))
-//                    }) {
-//                        Text("Activar AppBlockService")
-//                    }
-//
-//                    // Accesibility Service Activation
-//                    OpenAccessibilitySettingsButton(context)
-//                }
-//
-//                // Permiso pa mostrar sobre otras apps
-//                requestOverlayPermission(this)
+//                PhaseScreen()
+                Naveg()
+                Column (modifier = Modifier.fillMaxWidth().padding(top=100.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,)
+                {
+                    BodyContent(RestReminders,WaitTimeForApp)
+                    BotonAppBlock(AppBlock)
+                    BotonLimitTimePerSession(LimitTimePerSession)
+                    // AppBlock Service
+                    Button(onClick = {
+                        context.startService(Intent(context, AppBlockService::class.java))
+                    }) {
+                        Text("Activar AppBlockService")
+                    }
+
+                    // Accesibility Service Activation
+                    OpenAccessibilitySettingsButton(context)
+                }
+
+                // Permiso pa mostrar sobre otras apps
+                requestOverlayPermission(this)
             }
         }
     }
@@ -285,21 +280,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showSystemUi = true)
 @Composable
 fun GreetingPreview() {
-    val context = LocalContext.current
     //A
-    val r = RestReminders(context)
-    val w = WaitTimeForApp(context)
-    val s = LimitTimePerSession(context)
-    val b = AppBlock(context)
     ReclaimYourAttentionTheme {
         Naveg()
         Column(modifier = Modifier.fillMaxWidth().padding(top=90.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-            BodyContent(r, w)
-            BotonAppBlock(b)
-            BotonLimitTimePerSession(s)
+            BodyContent(RestReminders, WaitTimeForApp)
+            BotonAppBlock(AppBlock)
+            BotonLimitTimePerSession(LimitTimePerSession)
 
         }
     }

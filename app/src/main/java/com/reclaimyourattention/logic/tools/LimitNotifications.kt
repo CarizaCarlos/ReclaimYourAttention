@@ -1,22 +1,19 @@
 package com.reclaimyourattention.logic.tools
 
 import android.content.Context
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.services.LimitNotificationsService
 
-class LimitNotifications(private val context: Context): Tool() {
+object LimitNotifications: Tool() {
     //Variables Superclase
     override val title: String
         get() = "Limitar notificaciones"
     override val description: String
         get() = "Limitará las apps que pueden enviar notificaciones"
 
-    companion object {
-        private var blockedPackages: MutableSet<String> = mutableSetOf()
-
-        fun getBlockedPackages(): MutableSet<String> {
-            return blockedPackages
-        }
-    }
+    // Parámetros Solicitados al User
+    var blockedPackages: MutableSet<String> = mutableSetOf()
+        private set
 
     //Parámetros
     private var appsToLimit: String = "Va a ser un ArrayList"
@@ -44,7 +41,7 @@ class LimitNotifications(private val context: Context): Tool() {
         saveParameters()
 
         // Inicia el servicio
-        LimitNotificationsService.start(context)
+        LimitNotificationsService.start(appContext)
     }
 
     override fun deactivate() {
@@ -56,7 +53,7 @@ class LimitNotifications(private val context: Context): Tool() {
 
     // Métodos
     private fun saveParameters() {
-        val prefs = context.getSharedPreferences("LimitNotificationsPrefs", Context.MODE_PRIVATE)
+        val prefs = appContext.getSharedPreferences("LimitNotificationsPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putStringSet("blockedPackages", blockedPackages)
             apply()

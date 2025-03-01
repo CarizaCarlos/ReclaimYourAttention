@@ -3,11 +3,12 @@ package com.reclaimyourattention.logic.tools
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.services.BlockRequest
 import com.reclaimyourattention.logic.services.ToolType
 import kotlinx.serialization.json.Json
 
-class AppBlock(private val context: Context): Tool() {
+object AppBlock: Tool() {
     // Variables Superclase
     override val title: String
         get() = "Recordatorios para Descansar del Teléfono"
@@ -16,14 +17,8 @@ class AppBlock(private val context: Context): Tool() {
         get() = "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
 
     // Parámetros Solicitados al User
-    companion object {
-        private var blockedPackages: MutableSet<String> = mutableSetOf()
-
-        fun getBlockedPackages(): MutableSet<String> {
-            return blockedPackages
-        }
-    }
-
+    var blockedPackages: MutableSet<String> = mutableSetOf()
+        private set
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // appPackages: MutableSet<String>
@@ -38,7 +33,7 @@ class AppBlock(private val context: Context): Tool() {
             val intent = Intent("UNBLOCK_REQUEST")
                 .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
                 .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
-            context.sendBroadcast(intent)
+            appContext.sendBroadcast(intent)
 
             // Actualzia los parámetros
             val appPackages = (parameters[0] as MutableSet<*>)
@@ -68,7 +63,7 @@ class AppBlock(private val context: Context): Tool() {
             .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
             .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
             .putExtra("blockRequest", Json.encodeToString(blockRequest))
-        context.sendBroadcast(intent)
+        appContext.sendBroadcast(intent)
 
         Log.d("AppBlock", "Se Envía Solicitúd para Bloquear: $blockedPackages indefinidamente") // Log
     }
@@ -80,12 +75,12 @@ class AppBlock(private val context: Context): Tool() {
         val intent = Intent("UNBLOCK_REQUEST")
             .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
             .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
-        context.sendBroadcast(intent)
+        appContext.sendBroadcast(intent)
     }
 
     // Métodos
     private fun saveParameters() {
-        val prefs = context.getSharedPreferences("AppBlockPrefs", Context.MODE_PRIVATE)
+        val prefs = appContext.getSharedPreferences("AppBlockPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putStringSet("indefinitelyBlockedPackages", blockedPackages)
             apply()

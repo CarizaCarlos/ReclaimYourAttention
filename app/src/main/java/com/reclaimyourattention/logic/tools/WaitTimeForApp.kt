@@ -2,10 +2,10 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.services.WaitTimeForAppService
 
-class WaitTimeForApp(private val context: Context): Tool() {
+object WaitTimeForApp: Tool() {
     // Variables Superclase
     override val title: String
         get() = "Tiempo de Espera para Ingresar a Apps"
@@ -14,18 +14,10 @@ class WaitTimeForApp(private val context: Context): Tool() {
                 "mientras se muestra mensaje de reflexión"
 
     // Parámetros Solicitados al User
-    companion object {
-        private var waitSeconds: Int = 20
-        private var blockedPackages: MutableSet<String> = mutableSetOf()
-
-        fun getWaitSeconds(): Int {
-            return waitSeconds
-        }
-
-        fun getBlockedPackages(): MutableSet<String> {
-            return blockedPackages
-        }
-    }
+    var waitSeconds: Int = 20
+        private set
+    var blockedPackages: MutableSet<String> = mutableSetOf()
+        private set
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // waitSeconds: Int, blockedPackages: MutableSet<String>
@@ -52,19 +44,19 @@ class WaitTimeForApp(private val context: Context): Tool() {
         saveParameters()
 
         // Inicia el servicio
-        context.startService(Intent(context, WaitTimeForAppService::class.java))
+        appContext.startService(Intent(appContext, WaitTimeForAppService::class.java))
     }
 
     override fun deactivate() {
         active = false
 
         // Frena el servicio
-        context.stopService(Intent(context, WaitTimeForAppService::class.java))
+        appContext.stopService(Intent(appContext, WaitTimeForAppService::class.java))
     }
 
     // Métodos
     private fun saveParameters() {
-        val prefs = context.getSharedPreferences("WaitTimeForAppPrefs", Context.MODE_PRIVATE)
+        val prefs = appContext.getSharedPreferences("WaitTimeForAppPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putInt("waitSeconds", waitSeconds)
             putStringSet("blockedPackages", blockedPackages)

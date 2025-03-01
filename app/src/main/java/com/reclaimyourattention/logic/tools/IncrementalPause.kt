@@ -2,9 +2,10 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.services.LimitTimePerSessionService
 
-class IncrementalPause(private val context: Context): Tool() {
+object IncrementalPause: Tool() {
     // Variables Superclase
     override val title: String
         get() = "Incrementar la Pausa"
@@ -12,18 +13,10 @@ class IncrementalPause(private val context: Context): Tool() {
         get() = "Incrementa el tiempo para acceder a una app entre más se interactúe con el teléfono mientras se espera el desbloqueo"
 
     // Parámetros Solicitados al User
-    companion object {
-        private var incrementalSeconds: Int = 3
-        private var blockedPackages: MutableSet<String> = mutableSetOf()
-
-        fun getIncrementalSeconds(): Int {
-            return incrementalSeconds
-        }
-
-        fun getBlockedPackages(): MutableSet<String> {
-            return blockedPackages
-        }
-    }
+    var blockedPackages: MutableSet<String> = mutableSetOf()
+        private set
+    var incrementalSeconds: Int = 3
+        private set
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // TODO() activeMinutesTreshold: Int, cooldownMinutes: Int, blockedPackages: MutableSet<String>
@@ -50,19 +43,19 @@ class IncrementalPause(private val context: Context): Tool() {
         saveParameters()
 
         // Inicia el servicio
-        context.startService(Intent(context, LimitTimePerSessionService::class.java)) //TODO()
+        appContext.startService(Intent(appContext, LimitTimePerSessionService::class.java)) //TODO()
     }
 
     override fun deactivate() {
         active = false
 
         // Frena el servicio
-        context.stopService(Intent(context, LimitTimePerSessionService::class.java)) //TODO()
+        appContext.stopService(Intent(appContext, LimitTimePerSessionService::class.java)) //TODO()
     }
 
     // Métodos
     private fun saveParameters() { //TODO()
-        val prefs = context.getSharedPreferences("LimitTimePerSessionPrefs", Context.MODE_PRIVATE)
+        val prefs = appContext.getSharedPreferences("LimitTimePerSessionPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putStringSet("blockedPackages", blockedPackages)
             apply()

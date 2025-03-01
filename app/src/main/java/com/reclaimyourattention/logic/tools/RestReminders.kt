@@ -2,9 +2,10 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.services.RestRemindersService
 
-class RestReminders(private val context: Context): Tool() {
+object RestReminders: Tool() {
     // Variables Superclase
     override val title: String
         get() = "Recordatorios para Descansar del Teléfono"
@@ -12,13 +13,8 @@ class RestReminders(private val context: Context): Tool() {
         get() = "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
 
     // Parámetros Solicitados al User
-    companion object {
-        private var activityMinutesThreshold: Int = 25
-
-        fun getActivityMinutesThreshold(): Int {
-            return activityMinutesThreshold
-        }
-    }
+    var activityMinutesThreshold: Int = 25
+        private set
 
     // Métodos Superclase
     override fun activate(vararg parameters: Any) { // activityMinutesThreshold: Int
@@ -42,18 +38,18 @@ class RestReminders(private val context: Context): Tool() {
         saveParameters()
 
         // Inicia el servicio
-        context.startService(Intent(context, RestRemindersService::class.java))
+        appContext.startService(Intent(appContext, RestRemindersService::class.java))
     }
 
     override fun deactivate() {
         active = false
         // Frena el servicio
-        context.stopService(Intent(context, RestRemindersService::class.java))
+        appContext.stopService(Intent(appContext, RestRemindersService::class.java))
     }
 
     // Métodos
     private fun saveParameters() {
-        val prefs = context.getSharedPreferences("RestReminderPrefs", Context.MODE_PRIVATE)
+        val prefs = appContext.getSharedPreferences("RestReminderPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putInt("activityMinutesThreshold", activityMinutesThreshold)
             apply()

@@ -1,29 +1,21 @@
 package com.reclaimyourattention.logic.tools
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.math.min
 
-class LimitTimeInApp: Tool() {
+object LimitTimeInApp: Tool() {
     //Variables Superclase
     override val title: String
         get() = "Limitar tiempo en aplicación"
     override val description: String
         get() = "Limitar el Tiempo en total en pantalla teniendo en cuenta el uso de las apps"
 
-    companion object {
-        private var blockedPackages: MutableSet<String> = mutableSetOf()
-
-        fun getBlockedPackages(): MutableSet<String> {
-            return blockedPackages
-        }
-    }
-
     // Parámetros Solictados al user
-    private var blockedPackages: MutableSet<String> = mutableSetOf()
-    private var maxTotalMinutes: Int = 120
-    private var maxForEachMinutes: Int = 60
+    var blockedPackages: MutableSet<String> = mutableSetOf()
+        private set
+    var maxTotalMinutes: Int = 120
+        private set
+    var maxForEachMinutes: Int = 60
+        private set
 
     // Runnables
     private val limitForEach = object : Runnable {
@@ -94,5 +86,7 @@ class LimitTimeInApp: Tool() {
     override fun deactivate() {
         TODO("Not yet implemented")
     }
+
     //Métodos
+
 }
