@@ -51,7 +51,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.phases.Task
+import com.reclaimyourattention.logic.tools.ToolManager
 
 
 class MainActivity : ComponentActivity() {
@@ -87,6 +89,14 @@ class MainActivity : ComponentActivity() {
                 requestOverlayPermission(this)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // Guarda los estados
+        PhaseManager.saveStates()
+        ToolManager.saveStates()
     }
 }
 

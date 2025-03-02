@@ -17,13 +17,13 @@ object LimitNotifications: Tool() {
 
     //Métodos Superclase
     override fun saveState() {
-        super.saveState()
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+        super.saveState()
     }
 
     override fun loadState() {
-        super.loadState()
         blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        super.loadState()
     }
 
     override fun activate(vararg parameters: Any) { // blockedPackages: MutableSet<String>
@@ -56,6 +56,14 @@ object LimitNotifications: Tool() {
 
         // Frena el servicio
         LimitNotificationsService.stop()
+    }
+
+    override fun reactivate() {
+        // Guarda los parámetros
+        saveParameters()
+
+        // Inicia el servicio
+        LimitNotificationsService.start(appContext)
     }
 
     // Métodos

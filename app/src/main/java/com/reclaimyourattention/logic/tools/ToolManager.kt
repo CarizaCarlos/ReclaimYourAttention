@@ -5,8 +5,6 @@ object ToolManager { // TODO("quizás para activar el AppBlock service, verifica
     private val tools: Set<Tool> = setOf(
         AppBlock,
         BlockingScheduleForApp,
-        Diagnostic,
-        IncrementalPause,
         LimitNotifications,
         LimitTimeInApp,
         LimitTimePerSession,

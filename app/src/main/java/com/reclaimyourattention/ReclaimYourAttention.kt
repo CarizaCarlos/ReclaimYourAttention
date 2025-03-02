@@ -2,6 +2,7 @@ package com.reclaimyourattention
 
 import android.app.Application
 import android.content.Context
+import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.tools.ToolManager
 
 class ReclaimYourAttention: Application() {
@@ -15,5 +16,9 @@ class ReclaimYourAttention: Application() {
 
         // Inicializa el Application Context
         ReclaimYourAttention.appContext = applicationContext
+
+        // Carga los estados guardados
+        PhaseManager.loadStates()
+        ToolManager.loadStates()
     }
 }

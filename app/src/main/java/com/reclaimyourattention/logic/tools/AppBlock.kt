@@ -21,13 +21,13 @@ object AppBlock: Tool() {
 
     // Métodos Superclase
     override fun saveState() {
-        super.saveState()
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+        super.saveState()
     }
 
     override fun loadState() {
-        super.loadState()
         blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        super.loadState()
     }
 
     override fun activate(vararg parameters: Any) { // appPackages: MutableSet<String>
@@ -59,9 +59,22 @@ object AppBlock: Tool() {
             )
         }
 
-        // Guarda los parámetros
-        saveParameters()
+        // Envia un blockRequest a AppBlockService
+        val blockRequest = BlockRequest(
+            "Mensaje AppBlock",
+            null,
+            false
+        )
+        val intent = Intent("BLOCK_REQUEST")
+            .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
+            .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
+            .putExtra("blockRequest", Json.encodeToString(blockRequest))
+        appContext.sendBroadcast(intent)
 
+        Log.d("AppBlock", "Se Envía Solicitúd para Bloquear: $blockedPackages indefinidamente") // Log
+    }
+
+    override fun reactivate() {
         // Envia un blockRequest a AppBlockService
         val blockRequest = BlockRequest(
             "Mensaje AppBlock",
@@ -85,14 +98,5 @@ object AppBlock: Tool() {
             .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
             .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
         appContext.sendBroadcast(intent)
-    }
-
-    // Métodos
-    private fun saveParameters() {
-        val prefs = appContext.getSharedPreferences("AppBlockPrefs", Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putStringSet("indefinitelyBlockedPackages", blockedPackages)
-            apply()
-        }
     }
 }

@@ -22,17 +22,17 @@ object LimitTimePerSession: Tool() {
 
     // Métodos Superclase
     override fun saveState() {
-        super.saveState()
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
         StorageManager.saveInt("${storageKey}_activeMinutesTreshold", activeMinutesTreshold)
         StorageManager.saveInt("${storageKey}_cooldownMinutes", cooldownMinutes)
+        super.saveState()
     }
 
     override fun loadState() {
-        super.loadState()
         blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
         activeMinutesTreshold = StorageManager.getInt("${storageKey}_activeMinutesTreshold", activeMinutesTreshold)
         cooldownMinutes = StorageManager.getInt("${storageKey}_cooldownMinutes", cooldownMinutes)
+        super.loadState()
     }
 
     override fun activate(vararg parameters: Any) { // activeMinutesTreshold: Int, cooldownMinutes: Int, blockedPackages: MutableSet<String>
@@ -57,6 +57,14 @@ object LimitTimePerSession: Tool() {
             )
         }
 
+        // Guarda los parámetros
+        saveParameters()
+
+        // Inicia el servicio
+        appContext.startService(Intent(appContext, LimitTimePerSessionService::class.java))
+    }
+
+    override fun reactivate() {
         // Guarda los parámetros
         saveParameters()
 

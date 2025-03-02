@@ -19,13 +19,13 @@ object RestReminders: Tool() {
 
     // Métodos Superclase
     override fun saveState() {
-        super.saveState()
         StorageManager.saveInt("${storageKey}_activityMinutesThreshold",activityMinutesThreshold)
+        super.saveState()
     }
 
     override fun loadState() {
-        super.loadState()
         activityMinutesThreshold = StorageManager.getInt("${storageKey}_activityMinutesThreshold",activityMinutesThreshold)
+        super.loadState()
     }
 
     override fun activate(vararg parameters: Any) { // activityMinutesThreshold: Int
@@ -45,6 +45,14 @@ object RestReminders: Tool() {
             )
         }
 
+        // Guarda los parámetros
+        saveParameters()
+
+        // Inicia el servicio
+        appContext.startService(Intent(appContext, RestRemindersService::class.java))
+    }
+
+    override fun reactivate() {
         // Guarda los parámetros
         saveParameters()
 

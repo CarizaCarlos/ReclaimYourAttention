@@ -21,15 +21,15 @@ object WaitTimeForApp: Tool() {
 
     // Métodos Superclase
     override fun saveState() {
-        super.saveState()
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
         StorageManager.saveInt("${storageKey}_waitSeconds", waitSeconds)
+        super.saveState()
     }
 
     override fun loadState() {
-        super.loadState()
         blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
         waitSeconds = StorageManager.getInt("${storageKey}_waitSeconds", waitSeconds)
+        super.loadState()
     }
 
     override fun activate(vararg parameters: Any) { // waitSeconds: Int, blockedPackages: MutableSet<String>
@@ -52,6 +52,14 @@ object WaitTimeForApp: Tool() {
             )
         }
 
+        // Guarda los parámetros
+        saveParameters()
+
+        // Inicia el servicio
+        appContext.startService(Intent(appContext, WaitTimeForAppService::class.java))
+    }
+
+    override fun reactivate() {
         // Guarda los parámetros
         saveParameters()
 

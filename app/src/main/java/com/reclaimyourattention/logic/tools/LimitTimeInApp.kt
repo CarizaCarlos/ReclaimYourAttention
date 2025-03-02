@@ -79,28 +79,28 @@ object LimitTimeInApp: Tool() {
 
     // Métodos Superclase
     override fun saveState() {
-        super.saveState()
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
         StorageManager.saveInt("${storageKey}_maxTotalMinutes", maxTotalMinutes)
         StorageManager.saveInt("${storageKey}_maxForEachMinutes", maxForEachMinutes)
+        super.saveState()
     }
 
     override fun loadState() {
-        super.loadState()
         blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
         maxTotalMinutes = StorageManager.getInt("${storageKey}_maxTotalMinutes", maxTotalMinutes)
         maxForEachMinutes = StorageManager.getInt("${storageKey}_maxForEachMinutes", maxForEachMinutes)
+        super.loadState()
     }
 
     override fun activate(vararg parameters: Any) {
         TODO("Not yet implemented")
+    }
 
+    override fun reactivate() {
+        TODO("Not yet implemented")
     }
 
     override fun deactivate() {
         TODO("Not yet implemented")
     }
-
-    //Métodos
-
 }

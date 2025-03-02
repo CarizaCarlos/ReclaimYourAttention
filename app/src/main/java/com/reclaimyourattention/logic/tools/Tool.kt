@@ -17,11 +17,18 @@ abstract class Tool {
         StorageManager.saveBoolean("${storageKey}_active", active)
     }
 
-    open fun loadState() {
+    open fun loadState() { // Al sobreescribir poner el super.saveState() de últimas para que tome todos los cambios
         active = StorageManager.getBoolean("${storageKey}_active", active)
+
+        // Reactiva si la herramienta estaba activa
+        if (active) {
+            reactivate()
+        }
     }
 
     abstract fun activate(vararg parameters: Any)
+
+    abstract fun reactivate()
 
     abstract fun deactivate()
 }

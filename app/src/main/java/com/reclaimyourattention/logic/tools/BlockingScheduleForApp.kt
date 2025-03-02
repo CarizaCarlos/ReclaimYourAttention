@@ -14,15 +14,20 @@ object BlockingScheduleForApp: Tool()  {
 
     // Métodos Superclase
     override fun saveState() {
-        super.saveState()
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
+        super.saveState()
     }
 
     override fun loadState() {
-        super.loadState()
         blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        super.loadState()
     }
+
     override fun activate(vararg parameters: Any) {
+        TODO("Not yet implemented")
+    }
+
+    override fun reactivate() {
         TODO("Not yet implemented")
     }
 
