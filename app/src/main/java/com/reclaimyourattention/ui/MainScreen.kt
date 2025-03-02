@@ -41,16 +41,17 @@ fun MainScreen(navController: NavController) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Inicio") },Modifier.padding(top=60.dp)) }
     ) { paddingValues ->
-        Column() {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
             PhaseScreen()
         }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Bottom
         ) {
             Button(onClick = { navController.navigate("tools") }) {
                 Text("Ir a Herramientas")
@@ -137,15 +138,6 @@ fun TaskItem(task: Task, onComplete: () -> Unit) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
 
 //Preview
 @Preview(showSystemUi = true)

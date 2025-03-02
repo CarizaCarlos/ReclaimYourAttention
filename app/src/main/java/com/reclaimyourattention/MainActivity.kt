@@ -60,9 +60,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val context = this
-        val appBlockService=
         setContent {
             ReclaimYourAttentionTheme {
 //                PhaseScreen()
@@ -84,23 +81,7 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@Composable
-fun ServiceButtons(context: Context) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // Botón para activar AppBlockService
-        Button(onClick = {
-            context.startService(Intent(context, AppBlockService::class.java))
-        }) {
-            Text("Activar AppBlockService")
-        }
 
-        // Botón para abrir la configuración de accesibilidad
-        OpenAccessibilitySettingsButton(context)
-    }
-}
 
 
 

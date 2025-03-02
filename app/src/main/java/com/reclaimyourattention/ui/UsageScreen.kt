@@ -29,6 +29,12 @@ fun UsageScreen(navController: NavController) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Uso") },Modifier.padding(top=40.dp)) }
     ) { paddingValues ->
+        Column(modifier=Modifier.padding(top=200.dp).padding(horizontal = 50.dp)
+        ) {
+            appInfo("Youtube", 25)
+            appInfo("Instagram", 55)
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -43,19 +49,23 @@ fun UsageScreen(navController: NavController) {
             Button(onClick = { navController.navigate("tools") }) {
                 Text("Ir a Herramientas")
             }
-
-            // Info específica de Apps
-            appInfo("Youtube", 25)
-            appInfo("Instagram", 55)
         }
     }
 }
 
 @Composable
-@Preview
+@Preview(showSystemUi = true )
 fun previewAppInfo() {
     ReclaimYourAttentionTheme {
-        appInfo("App Name", 60)
+        Column(
+            modifier = Modifier
+            .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            appInfo("Youtube", 25)
+            appInfo("Instagram", 55)
+        }
     }
 }
 
@@ -69,7 +79,7 @@ fun appInfo(appName: String, timeUsed: Int) {
         Column {
             Row {
                 Text(appName)
-                Text("$timeUsed min")
+                Text(" $timeUsed min")
             }
             progressBar(30)
         }

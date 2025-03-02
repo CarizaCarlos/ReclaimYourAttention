@@ -48,6 +48,7 @@ fun ToolsScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             BodyContent(RestReminders, WaitTimeForApp)
             BotonLimitTimePerSession(LimitTimePerSession)
@@ -58,7 +59,7 @@ fun ToolsScreen(navController: NavController) {
             .fillMaxSize()
             .padding(paddingValues) ,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Bottom
         ) {
             Button(onClick = { navController.navigate("main") }) {
                 Text("Ir a Inicio")
