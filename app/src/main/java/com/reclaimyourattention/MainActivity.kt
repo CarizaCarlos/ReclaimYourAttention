@@ -83,6 +83,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun ServiceButtons(context: Context) {
     Column(
@@ -100,83 +101,6 @@ fun ServiceButtons(context: Context) {
         OpenAccessibilitySettingsButton(context)
     }
 }
-
-
-
-@Composable
-fun PhaseScreen(phaseViewModel: PhaseViewModel = viewModel()) {
-    val currentPhase by phaseViewModel.currentPhase.observeAsState()
-    val currentTasks by phaseViewModel.currentTasks.observeAsState(initial = emptyList())
-    val canAdvance by phaseViewModel.canAdvancePhase.observeAsState(initial = false)
-
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            currentPhase?.let { phase ->
-                Text(text = phase.title, style = MaterialTheme.typography.headlineMedium)
-                Text(text = phase.description, style = MaterialTheme.typography.bodyMedium)
-                Text(
-                    text = "Current week: ${phase.currentWeekIndex}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                LazyColumn {
-                    items(currentTasks) { task ->
-                        TaskItem(task = task) {
-                            phaseViewModel.completeTask(task.id)
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = { phaseViewModel.onAdvancePhaseClicked() },
-                    enabled = canAdvance,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Advance Phase")
-                }
-            } ?: Text(
-                text = "All phases completed!",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-
-@Composable
-fun TaskItem(task: Task, onComplete: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = task.title, style = MaterialTheme.typography.bodyLarge)
-                Text(text = task.body, style = MaterialTheme.typography.bodyMedium)
-            }
-            Button(onClick = onComplete) {
-                Text("Mark Completed")
-            }
-        }
-    }
-}
-
-
-
 
 
 

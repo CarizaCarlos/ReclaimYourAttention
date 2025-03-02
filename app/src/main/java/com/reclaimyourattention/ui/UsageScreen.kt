@@ -27,7 +27,7 @@ import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 @Composable
 fun UsageScreen(navController: NavController) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Uso") }) }
+        topBar = { TopAppBar(title = { Text("Uso") },Modifier.padding(top=40.dp)) }
     ) { paddingValues ->
         Column(
             modifier = Modifier

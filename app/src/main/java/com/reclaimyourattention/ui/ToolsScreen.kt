@@ -41,7 +41,7 @@ import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 fun ToolsScreen(navController: NavController) {
     val context = LocalContext.current
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Herramientas") }) }
+        topBar = { TopAppBar(title = { Text("Herramientas") },Modifier.padding(top=40.dp)) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
