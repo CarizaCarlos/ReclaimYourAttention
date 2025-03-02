@@ -20,6 +20,7 @@ lifecycleRuntimeKtxVersion = "2.7.0"
 lifecycleViewmodelCompose = "2.8.5"
 navigationCompose = "2.8.7"
 lifecycleService = "2.8.7"
+navigationComposeVersion = "2.5.0-alpha01"
 savedstate = "1.2.1"
 runtimeLivedata = "1.7.8"
 
@@ -36,6 +37,7 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+androidx-navigation-compose-v250alpha01 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-savedstate = { module = "androidx.savedstate:savedstate", version.ref = "savedstate" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
