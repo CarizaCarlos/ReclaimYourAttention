@@ -11,7 +11,7 @@ data class BlockRequest (
 )
 
 @Serializable
-enum class ToolType {WAIT_TIME, SCHEDULED_BLOCK, LIMIT_DAILY, LIMIT_SESSION, INDEFINITELY, DIAGNOSTIC}
+enum class ToolType {WAIT_TIME, SCHEDULED_BLOCK, LIMIT_DAILY, LIMIT_SESSION, INDEFINITELY, DIAGNOSTIC, REST_REMINDERS }
 
 // Prioridad de las Herramientas
 val toolTypePriority = listOf(

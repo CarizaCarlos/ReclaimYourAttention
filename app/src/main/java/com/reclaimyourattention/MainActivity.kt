@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ReclaimYourAttentionTheme {
-//                PhaseScreen()
                 Naveg()
 
                 // Permiso pa mostrar sobre otras apps
