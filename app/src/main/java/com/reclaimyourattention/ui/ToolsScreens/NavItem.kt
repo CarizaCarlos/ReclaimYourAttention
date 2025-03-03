@@ -1,4 +1,4 @@
-package com.reclaimyourattention.ui
+package com.reclaimyourattention.ui.ToolsScreens
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

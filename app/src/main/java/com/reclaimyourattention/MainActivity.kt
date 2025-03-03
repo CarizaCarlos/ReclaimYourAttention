@@ -58,7 +58,7 @@ import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.tools.ToolManager
 import com.reclaimyourattention.ui.theme.TaskScreen
 import com.reclaimyourattention.ui.theme.TaskScreen
-import com.reclaimyourattention.ui.ToolsScreens.RestRemindersScreen
+import com.reclaimyourattention.ui.ToolsScreens.NavigationBar
 
 
 class MainActivity : ComponentActivity() {
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ReclaimYourAttentionTheme {
                 Naveg()
-                RestRemindersScreen()
+                NavigationBar()
 
                 // Permiso pa mostrar sobre otras apps
                 requestOverlayPermission(this)
