@@ -1,5 +1,6 @@
 package com.reclaimyourattention.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
@@ -46,12 +48,32 @@ import com.reclaimyourattention.ui.theme.Gray
 import com.reclaimyourattention.viewmodel.PhaseViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
     ReclaimYourAttentionTheme {
         MainScreen()
+    }
+}
+
+// ViewModel para manejar la navegación y generación de TaskScreens
+object TaskViewModel : ViewModel() {
+    // Estado privado
+    private val _selectedTask = MutableStateFlow<Task?>(null)
+
+    // Flujo público (usa asStateFlow para evitar mutaciones externas)
+    val selectedTask: StateFlow<Task?> = _selectedTask.asStateFlow()
+
+    // Función para actualizar la tarea
+    fun selectTask(task: Task) {
+        Log.d("VIEWMODEL", "Tarea almacenada: ${task.title}")
+        _selectedTask.value = task
     }
 }
 
@@ -65,6 +87,7 @@ enum class FilterType {
 
 @Composable
 fun MainScreen(navController: NavController? = null) {
+
     // Estados PhaseViewModel
     val currentPhase by PhaseViewModel.currentPhase.observeAsState()
     val currentTasks by PhaseViewModel.currentTasks.observeAsState(initial = emptyList())
@@ -113,6 +136,9 @@ fun MainScreen(navController: NavController? = null) {
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
                     text = phase.description,
                     textAlign = TextAlign.Center,
@@ -208,10 +234,25 @@ fun MainScreen(navController: NavController? = null) {
             // Tareas
             LazyColumn {
                 items(filteredCurrentTasks) { task ->
-                    TaskItem(task)
+                    TaskItem(
+                        task = task,
+                        onClick = {
+                            Log.d("NAVIGATION", "Tarea seleccionada: ${task.title}")
+                            TaskViewModel.selectTask(task)
+                            navController?.navigate("task")
+                        }
+                    )
                 }
                 items(filteredCompletedTasks) { task ->
-                    TaskItem(task, true)
+                    TaskItem(
+                        task = task,
+                        areDone = true,
+                        onClick = {
+                            Log.d("NAVIGATION", "Tarea seleccionada: ${task.title}")
+                            TaskViewModel.selectTask(task)
+                            navController?.navigate("task")
+                        }
+                    )
                 }
             }
         }
@@ -292,11 +333,16 @@ fun TaskItemsPreview() {
 }
 
 @Composable
-fun TaskItem(task: Task, areDone: Boolean = false) {
+fun TaskItem(task: Task, areDone: Boolean = false, navController: NavController? = null, onClick: (() -> Unit?)? = null) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable {
+                if (onClick != null) {
+                    onClick()
+                }
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(

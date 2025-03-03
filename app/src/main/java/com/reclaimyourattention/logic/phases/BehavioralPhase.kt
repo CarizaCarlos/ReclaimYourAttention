@@ -15,7 +15,6 @@ object BehavioralTasks {
         Task(
             id = "01",
             title = "¿Qué es la Terapía Conductual?",
-            body = "", // TODO()
             tool = null,
             taskPrerrequisitesID = null,
             isMandatory = true,

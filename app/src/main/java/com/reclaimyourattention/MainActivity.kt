@@ -51,9 +51,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.tools.ToolManager
+import com.reclaimyourattention.ui.theme.TaskScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -79,12 +82,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
-
-
-
-
 @Composable
 fun Naveg(){
     val navController = rememberNavController()
@@ -92,7 +89,7 @@ fun Naveg(){
         composable("main") { MainScreen(navController) }
         composable("tools") { ToolsScreen(navController) }
         composable("usage") { UsageScreen(navController) }
-        //RestReminder
+        composable("task") { TaskScreen() }
     }
 }
 

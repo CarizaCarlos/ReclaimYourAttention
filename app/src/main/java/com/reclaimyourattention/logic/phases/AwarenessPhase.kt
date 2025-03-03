@@ -17,7 +17,6 @@ object AwarenessTasks {
         Task(
             id = "01",
             title = "¿Cómo Funciona la App?",
-            body = "", // TODO()
             tool = null,
             taskPrerrequisitesID = null,
             isMandatory = true,
@@ -26,7 +25,6 @@ object AwarenessTasks {
         Task(
             id = "02",
             title = "Autodiagnóstico",
-            body = "", // TODO()
             tool = ToolType.DIAGNOSTIC,
             taskPrerrequisitesID = setOf("01"),
             isMandatory = true,
@@ -35,7 +33,6 @@ object AwarenessTasks {
         Task(
             id = "03",
             title = "Agrega tus Primeros Límites de Tiempo",
-            body = "", // TODO()
             tool = ToolType.LIMIT_DAILY,
             taskPrerrequisitesID = setOf("02"),
             isMandatory = true,
@@ -44,7 +41,6 @@ object AwarenessTasks {
         Task(
             id = "04",
             title = "Rechaza la Convenencia",
-            body = "", // TODO()
             tool = null,
             taskPrerrequisitesID = null,
             isMandatory = false,

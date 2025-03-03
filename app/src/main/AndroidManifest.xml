@@ -11,6 +11,7 @@
 
     <application
         android:name=".ReclaimYourAttention"
+        android:enableOnBackInvokedCallback="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -19,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ReclaimYourAttention"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu">
         <receiver
             android:name=".logic.receivers.BootReceiver"
             android:enabled="true"
