@@ -4,8 +4,10 @@ import android.content.Context
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import com.reclaimyourattention.logic.tools.LimitNotifications
 
-class LimitNotificationsService: NotificationListenerService() {
+class LimitNotificationsService: NotificationListenerService() { // Depende de LimitNotifications Tool
     companion object {
         // Variables de Control
         private var active: Boolean = false
@@ -13,12 +15,11 @@ class LimitNotificationsService: NotificationListenerService() {
         // Parámetros Solictados al user
         private var blockedPackages: MutableSet<String> = mutableSetOf()
 
-        fun start(context: Context) {
+        fun start() {
             active = true
 
             // Recupera los parámetros solicitados
-            val prefs = context.getSharedPreferences("LimitNotificationsPrefs", MODE_PRIVATE)
-            blockedPackages = prefs.getStringSet("blockedPackages", blockedPackages) ?: mutableSetOf()
+            blockedPackages = LimitNotifications.blockedPackages
 
             Log.d("LimitNotificationsService", "blockedPackages: $blockedPackages") // Log
         }

@@ -65,7 +65,6 @@ class MainActivity : ComponentActivity() {
         val context = this
         setContent {
             ReclaimYourAttentionTheme {
-//                PhaseScreen()
                 Naveg()
                 RestRemindersScreen()
 

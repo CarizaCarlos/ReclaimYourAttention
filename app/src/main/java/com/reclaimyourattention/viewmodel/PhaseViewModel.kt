@@ -17,6 +17,12 @@ object PhaseViewModel: ViewModel() {
     }
     val currentTasks: LiveData<List<Task>> = _currentTasks
 
+    private val _completedTasks = MutableLiveData<List<Task>>().apply {
+        value = PhaseManager.phases
+            .flatMap { it.getCompleteTasks() }
+    }
+    val completedTasks: LiveData<List<Task>> = _completedTasks
+
     private val _canAdvancePhase = MutableLiveData(PhaseManager.canAdvancePhase())
     val canAdvancePhase: LiveData<Boolean> get() = _canAdvancePhase
 

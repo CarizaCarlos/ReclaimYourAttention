@@ -2,7 +2,7 @@ package com.reclaimyourattention.logic.phases
 
 object PhaseManager {
     // Atributos
-    private val phases: List<Phase> = listOf(
+    val phases: List<Phase> = listOf(
         AwarenessPhase,
         BehavioralPhase,
         ReintroductionPhase

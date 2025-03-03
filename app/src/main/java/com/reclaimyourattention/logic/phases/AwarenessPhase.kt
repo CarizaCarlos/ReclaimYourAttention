@@ -5,7 +5,7 @@ import com.reclaimyourattention.logic.services.ToolType
 object AwarenessPhase: Phase() {
     // Atributos Superclase
     override val title: String = "Fase de Concientización"
-    override val description: String = ""
+    override val description: String = "En ésta fase aplicarás tus primeras restricciones, aprenderás a usar la app y recibirás información valiosa para tu progreso"
     override val weeks: List<Set<Task>> = listOf(
         AwarenessTasks.week1
     )
@@ -42,12 +42,12 @@ object AwarenessTasks {
             readingMinutes = 1
         ),
         Task(
-            id = "03",
-            title = "Agrega tus Primeros Límites de Tiempo",
+            id = "04",
+            title = "Rechaza la Convenencia",
             body = "", // TODO()
-            tool = ToolType.LIMIT_DAILY,
-            taskPrerrequisitesID = setOf("02"),
-            isMandatory = true,
+            tool = null,
+            taskPrerrequisitesID = null,
+            isMandatory = false,
             readingMinutes = 1
         )
         // TODO("Faltan más")

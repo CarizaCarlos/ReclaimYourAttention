@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import com.reclaimyourattention.logic.StorageManager
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
@@ -17,7 +18,10 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 
-class BlockingScheduleForAppService: Service() {
+class BlockingScheduleForAppService: Service() { // Depende de BlockingScheduleForApp Tool
+    // Atributos
+    private val storageKey = "BlockingScheduleForAppService"
+
     // Parámetros Solicitados al user
     private var blockingSchedule: Map<DayOfWeek, MutableList<Pair<LocalDateTime, LocalDateTime>>> =
         listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)

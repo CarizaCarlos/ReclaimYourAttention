@@ -12,8 +12,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.ScreenReceiver
+import com.reclaimyourattention.logic.tools.RestReminders
 
-class RestRemindersService: Service() {
+class RestRemindersService: Service() { // Depende de RestReminders Tool
     // Parámetros
         // Solicitados al User
         private var activityMinutesThreshold: Int = 25
@@ -108,8 +109,7 @@ class RestRemindersService: Service() {
         registerReceiver(screenReceiver, filter)
 
         // Recupera los parámetros solicitados
-        val prefs = getSharedPreferences("RestReminderPrefs", MODE_PRIVATE)
-        activityMinutesThreshold = prefs.getInt("activityMinutesThreshold", activityMinutesThreshold)
+        activityMinutesThreshold = RestReminders.activityMinutesThreshold
 
         Log.d("RestRemindersService", "activityMinutesThreshold: $activityMinutesThreshold") // Log
 
@@ -137,10 +137,10 @@ class RestRemindersService: Service() {
     // Métodos
     private fun sendNotification() {
         // Se crea la notificación
-        val notification = NotificationCompat.Builder(this, "rest_reminder")
+        val notification = NotificationCompat.Builder(this, "rest_reminders")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Descanso recomendado")
-            .setContentText("Has pasado "+"minutos frente a la pantalla. Es hora de un descanso")
+            .setContentText("Has pasado $activityMinutesThreshold minutos frente a la pantalla. Es hora de un descanso")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 

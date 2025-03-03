@@ -55,4 +55,19 @@ object StorageManager {
         val json = getString(key)
         return try { Json.decodeFromString<T>(json) } catch (e: Exception) { null }
     }
+
+    // Maps
+    inline fun <reified T> saveMap(key: String, map: T) {
+        val jsonString = Json.encodeToString(map)
+        saveString(key, jsonString)
+    }
+
+    inline fun <reified T> getMap(key: String, default: T): T {
+        val jsonString = getString(key, Json.encodeToString(default))
+        return try {
+            Json.decodeFromString<T>(jsonString)
+        } catch (e: Exception) {
+            default
+        }
+    }
 }
