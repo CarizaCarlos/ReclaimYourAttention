@@ -65,15 +65,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val context = this
         setContent {
             ReclaimYourAttentionTheme {
-                Naveg()
-                NavigationBar()
+                val navController = rememberNavController()
 
-                // Permiso pa mostrar sobre otras apps
-                requestOverlayPermission(this)
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar(navController = navController)
+                    }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "main",
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        // Pantallas principales
+                        composable("main") { MainScreen(navController) }
+                        composable("tools") { ToolsScreen() }
+                        composable("usage") { UsageScreen() }
+                        composable("task") { TaskScreen() }
+                    }
+                }
             }
         }
     }
@@ -84,18 +96,6 @@ class MainActivity : ComponentActivity() {
         // Guarda los estados
         PhaseManager.saveStates()
         ToolManager.saveStates()
-    }
-}
-
-@Composable
-fun Naveg(){
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MainScreen(navController) }
-        composable("task") { TaskScreen() }
-        composable("tools") { ToolsScreen() }
-        composable("usage") { UsageScreen() }
-        //RestReminder
     }
 }
 
@@ -116,7 +116,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     //A
     ReclaimYourAttentionTheme {
-        Naveg()
 
         Column(modifier = Modifier.fillMaxWidth().padding(top=90.dp),
             verticalArrangement = Arrangement.Center,

@@ -19,56 +19,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavController
 import com.reclaimyourattention.ui.MainScreen
 import com.reclaimyourattention.ui.ToolsScreen
 import com.reclaimyourattention.ui.UsageScreen
 
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NavigationBar(){
-    val navItemList = listOf(
-        NavItem("Home", Icons.Default.Home),
-        NavItem("Tools", Icons.Default.Build),
-        NavItem("Usage", Icons.Default.Analytics),
+fun NavigationBar(navController: NavController?=null) {
+    val navItems = listOf(
+        NavItem("Principal", "main", Icons.Default.Home),
+        NavItem("Herramientas", "tools", Icons.Default.Build),
+        NavItem("Uso", "usage", Icons.Default.Analytics)
     )
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
-    Scaffold(modifier= Modifier.fillMaxSize(),
-        bottomBar = {
-            NavigationBar{
-                navItemList.forEachIndexed{index, navItem ->
-                    NavigationBarItem(
-                        selected= selectedIndex == index ,
-                        onClick = {
-                            selectedIndex = index
-                        },
-                        icon ={
-                            Icon(imageVector=navItem.icon,contentDescription="Icon")
-                        },
-                        label = { Text(text= navItem.label)}
-                    )
-                }
 
-            }
-        }) { innerPadding ->
-            ContentScreen(modifier=Modifier.padding(innerPadding),selectedIndex)
+    val currentRoute = navController?.currentBackStackEntry?.destination?.route
 
+    NavigationBar {
+        navItems.forEach { item ->
+            NavigationBarItem(
+                selected = currentRoute == item.route,
+                onClick = {
+                    navController?.navigate(item.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                },
+                icon = { Icon(item.icon, contentDescription = item.label) },
+                label = { Text(item.label) }
+            )
+        }
     }
 }
 
-@Composable
-fun ContentScreen(modifier: Modifier=Modifier, selectedIndex : Int){
-    when(selectedIndex){
-        0-> MainScreen()
-        1-> ToolsScreen()
-        2-> UsageScreen()
-    }
-}
-
-
-@Preview(showSystemUi = true)
+@Preview
 @Composable
 fun Preview(){
     NavigationBar()
