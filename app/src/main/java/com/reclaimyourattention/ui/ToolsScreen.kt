@@ -38,7 +38,7 @@ import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolsScreen(navController: NavController) {
+fun ToolsScreen(modifier: Modifier=Modifier) {
     val context = LocalContext.current
     Scaffold(
         topBar = { TopAppBar(title = { Text("Herramientas") },Modifier.padding(top=40.dp)) }
@@ -61,13 +61,6 @@ fun ToolsScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
-            Button(onClick = { navController.navigate("main") }) {
-                Text("Ir a Inicio")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("usage") }) {
-                Text("Ir a Uso")
-            }
         }
     }
 }
