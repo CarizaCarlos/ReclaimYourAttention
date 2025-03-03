@@ -1,6 +1,5 @@
 package com.reclaimyourattention.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,33 +14,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.reclaimyourattention.R
-import com.reclaimyourattention.ReclaimYourAttention
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
-import com.reclaimyourattention.viewmodel.PhaseViewModel
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -49,15 +35,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import com.reclaimyourattention.logic.services.ToolType
-import com.reclaimyourattention.ui.theme.Blue
 import com.reclaimyourattention.ui.theme.DarkGray
 import com.reclaimyourattention.ui.theme.Gray
-import com.reclaimyourattention.ui.theme.Green
-import com.reclaimyourattention.ui.theme.Purple
+import com.reclaimyourattention.viewmodel.PhaseViewModel
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 @Preview(showBackground = true)
 @Composable
@@ -67,8 +55,42 @@ fun MainScreenPreview() {
     }
 }
 
+// Enum para la lógica del filtrado de tareas
+enum class FilterType {
+    OBLIGATORIAS,
+    OPCIONALES,
+    HERRAMIENTAS,
+    NONE
+}
+
 @Composable
 fun MainScreen(navController: NavController? = null) {
+    // Estados PhaseViewModel
+    val currentPhase by PhaseViewModel.currentPhase.observeAsState()
+    val currentTasks by PhaseViewModel.currentTasks.observeAsState(initial = emptyList())
+    val completedTasks by PhaseViewModel.completedTasks.observeAsState(initial = emptyList())
+    val canAdvance by PhaseViewModel.canAdvancePhase.observeAsState(initial = false)
+
+    // Estado del filtro
+    var activeFilters by remember {
+        mutableStateOf(FilterType.entries.toSet())
+    }
+
+    // Función de filtrado (dentro del composable)
+    var selectedFilter by remember { mutableStateOf(FilterType.NONE) }
+    fun Task.matchesFilter(filter: FilterType): Boolean {
+        return when (filter) {
+            FilterType.OBLIGATORIAS -> isMandatory
+            FilterType.OPCIONALES -> !isMandatory
+            FilterType.HERRAMIENTAS -> tool != null
+            FilterType.NONE -> true
+        }
+    }
+
+    // Listas filtradas
+    val filteredCurrentTasks = currentTasks.filter { it.matchesFilter(selectedFilter) }
+    val filteredCompletedTasks = completedTasks.filter { it.matchesFilter(selectedFilter) }
+
     Scaffold(
         modifier = Modifier
     ) { paddingValues ->
@@ -77,20 +99,31 @@ fun MainScreen(navController: NavController? = null) {
                 .padding(paddingValues)
                 .fillMaxSize()
                 .padding(24.dp),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Fase",
-                style = MaterialTheme.typography.titleLarge)
-            Text(
-                text = "Descripción Fase",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            // Información de la Fase
+            currentPhase?.let { phase ->
+                Text(
+                    text = phase.title,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "Semana ${phase.currentWeekIndex+1}",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = phase.description,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
+            // Botones de Filtrado
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -101,102 +134,89 @@ fun MainScreen(navController: NavController? = null) {
                         .padding(horizontal = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    // Botón Tareas Obligatorias
                     Button(
-                        onClick = {},
+                        onClick = {
+                            selectedFilter = if (selectedFilter == FilterType.OBLIGATORIAS) FilterType.NONE
+                            else FilterType.OBLIGATORIAS
+                        },
                         modifier = Modifier
                             .weight(1f),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
+                            containerColor = if (selectedFilter == FilterType.OBLIGATORIAS) {
+                                MaterialTheme.colorScheme.secondary
+                            } else {
+                                Gray
+                            }
                         )
                     ) {
                         Text(
                             text = "Obligatorias",
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
+
+                    // Botón Tareas con Herramientas
                     Button(
-                        onClick = {},
+                        onClick = {
+                            selectedFilter = if (selectedFilter == FilterType.HERRAMIENTAS) FilterType.NONE
+                            else FilterType.HERRAMIENTAS
+                        },
                         modifier = Modifier
                             .weight(1f),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
+                            containerColor = if (selectedFilter == FilterType.HERRAMIENTAS) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                Gray
+                            }
                         )
                     ) {
                         Text(
                             text = "Herramientas",
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 }
 
+                // Botón Tareas Opcionales
                 Button(
-                    onClick = {},
+                    onClick = {
+                        selectedFilter = if (selectedFilter == FilterType.OPCIONALES) FilterType.NONE
+                        else FilterType.OPCIONALES
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary
+                        containerColor = if (selectedFilter == FilterType.OPCIONALES) {
+                            MaterialTheme.colorScheme.tertiary
+                        } else {
+                            Gray
+                        }
                     )
                 ) {
                     Text(
                         text = "Opcionales",
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge
                     )
                 }
             }
 
-
             Spacer(modifier = Modifier.height(8.dp))
 
-            TaskItemsPreview()
+            // Tareas
+            LazyColumn {
+                items(filteredCurrentTasks) { task ->
+                    TaskItem(task)
+                }
+                items(filteredCompletedTasks) { task ->
+                    TaskItem(task, true)
+                }
+            }
         }
     }
 }
-
-//@Composable
-//fun PhaseScreen(phaseViewModel: PhaseViewModel = viewModel()) {
-//    val currentPhase by phaseViewModel.currentPhase.observeAsState()
-//    val currentTasks by phaseViewModel.currentTasks.observeAsState(initial = emptyList())
-//    val canAdvance by phaseViewModel.canAdvancePhase.observeAsState(initial = false)
-//
-//    Surface(modifier = Modifier.fillMaxSize()) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            currentPhase?.let { phase ->
-//                Text(text = phase.title, style = MaterialTheme.typography.headlineMedium)
-//                Text(text = phase.description, style = MaterialTheme.typography.bodyMedium)
-//                Text(
-//                    text = "Current week: ${phase.currentWeekIndex}",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-//                Spacer(modifier = Modifier.height(16.dp))
-//
-//                LazyColumn {
-//                    items(currentTasks) { task ->
-//                        TaskItem(task = task)
-//                    }
-//                }
-//                Spacer(modifier = Modifier.height(16.dp))
-//
-//                Button(
-//                    onClick = { phaseViewModel.onAdvancePhaseClicked() },
-//                    enabled = canAdvance,
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text("Advance Phase")
-//                }
-//            } ?: Text(
-//                text = "All phases completed!",
-//                style = MaterialTheme.typography.headlineSmall,
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//        }
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable

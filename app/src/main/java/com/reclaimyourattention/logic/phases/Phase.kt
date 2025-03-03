@@ -52,4 +52,9 @@ abstract class Phase {
         val currentWeekTasks = weeks.getOrNull(currentWeekIndex) ?: emptySet()
         return currentWeekTasks.filter { !completedTaskIDs.contains(it.id) }
     }
+
+    fun getCompleteTasks(): List<Task> {
+        val currentWeekTasks = weeks.getOrNull(currentWeekIndex) ?: emptySet()
+        return currentWeekTasks.filter { completedTaskIDs.contains(it.id) }
+    }
 }
