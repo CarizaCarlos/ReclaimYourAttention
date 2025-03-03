@@ -11,11 +11,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.receivers.ForegroundAppReceiver
+import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
 
-class WaitTimeForAppService: Service() {
+class WaitTimeForAppService: Service() { // Depende de WaitTimeForApp Tool
     // Parámetros
         // Solicitados al User
         private var waitSeconds: Int = 20
@@ -76,9 +77,8 @@ class WaitTimeForAppService: Service() {
         startForeground(1, persistentNotification)
 
         // Recupera los parámetros solicitados
-        val prefs = getSharedPreferences("WaitTimeForAppPrefs", MODE_PRIVATE)
-        waitSeconds = prefs.getInt("waitSeconds", waitSeconds)
-        blockedPackages = prefs.getStringSet("blockedPackages", blockedPackages) ?: mutableSetOf()
+        waitSeconds = WaitTimeForApp.waitSeconds
+        blockedPackages = WaitTimeForApp.blockedPackages
 
         Log.d("WaitTimeForAppService", "waitSeconds: $waitSeconds, blockedPackages: $blockedPackages") // Log
 

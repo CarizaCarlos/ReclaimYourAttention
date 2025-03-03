@@ -7,15 +7,12 @@ import android.content.SharedPreferences
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 
-class ForegroundAppTracker: AccessibilityService() {
-    // Variables de Control
+class ForegroundAppTracker: AccessibilityService() { // Independiente, necesaria para el funcionamiento de varias Tools
     companion object {
-        @Volatile // Para asegurar la visibilidad entre hilos
-        private var lastPackageName: String? = null
-
-        fun getLastPackageName(): String? {
-            return lastPackageName
-        }
+        // Variables de Control
+        @Volatile
+        var lastPackageName: String? = null
+            private set
     }
 
     // Métodos Superclase

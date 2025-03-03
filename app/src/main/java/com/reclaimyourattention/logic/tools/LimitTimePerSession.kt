@@ -58,16 +58,13 @@ object LimitTimePerSession: Tool() {
         }
 
         // Guarda los parámetros
-        saveParameters()
+        saveState()
 
         // Inicia el servicio
         appContext.startService(Intent(appContext, LimitTimePerSessionService::class.java))
     }
 
     override fun reactivate() {
-        // Guarda los parámetros
-        saveParameters()
-
         // Inicia el servicio
         appContext.startService(Intent(appContext, LimitTimePerSessionService::class.java))
     }
@@ -77,16 +74,5 @@ object LimitTimePerSession: Tool() {
 
         // Frena el servicio
         appContext.stopService(Intent(appContext, LimitTimePerSessionService::class.java))
-    }
-
-    // Métodos
-    private fun saveParameters() {
-        val prefs = appContext.getSharedPreferences("LimitTimePerSessionPrefs", Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putInt("activeMinutesTreshold", activeMinutesTreshold)
-            putInt("cooldownMinutes", cooldownMinutes)
-            putStringSet("blockedPackages", blockedPackages)
-            apply()
-        }
     }
 }

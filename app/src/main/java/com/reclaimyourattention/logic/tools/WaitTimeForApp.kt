@@ -53,16 +53,13 @@ object WaitTimeForApp: Tool() {
         }
 
         // Guarda los parámetros
-        saveParameters()
+        saveState()
 
         // Inicia el servicio
         appContext.startService(Intent(appContext, WaitTimeForAppService::class.java))
     }
 
     override fun reactivate() {
-        // Guarda los parámetros
-        saveParameters()
-
         // Inicia el servicio
         appContext.startService(Intent(appContext, WaitTimeForAppService::class.java))
     }
@@ -72,15 +69,5 @@ object WaitTimeForApp: Tool() {
 
         // Frena el servicio
         appContext.stopService(Intent(appContext, WaitTimeForAppService::class.java))
-    }
-
-    // Métodos
-    private fun saveParameters() {
-        val prefs = appContext.getSharedPreferences("WaitTimeForAppPrefs", Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putInt("waitSeconds", waitSeconds)
-            putStringSet("blockedPackages", blockedPackages)
-            apply()
-        }
     }
 }

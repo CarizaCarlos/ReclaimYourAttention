@@ -46,16 +46,13 @@ object RestReminders: Tool() {
         }
 
         // Guarda los parámetros
-        saveParameters()
+        saveState()
 
         // Inicia el servicio
         appContext.startService(Intent(appContext, RestRemindersService::class.java))
     }
 
     override fun reactivate() {
-        // Guarda los parámetros
-        saveParameters()
-
         // Inicia el servicio
         appContext.startService(Intent(appContext, RestRemindersService::class.java))
     }
@@ -64,14 +61,5 @@ object RestReminders: Tool() {
         active = false
         // Frena el servicio
         appContext.stopService(Intent(appContext, RestRemindersService::class.java))
-    }
-
-    // Métodos
-    private fun saveParameters() {
-        val prefs = appContext.getSharedPreferences("RestReminderPrefs", Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putInt("activityMinutesThreshold", activityMinutesThreshold)
-            apply()
-        }
     }
 }

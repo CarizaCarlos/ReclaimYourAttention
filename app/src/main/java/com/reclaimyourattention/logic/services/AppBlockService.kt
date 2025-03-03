@@ -30,11 +30,39 @@ import kotlinx.datetime.Clock
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.ui.BlockedAppScreen
 
-class AppBlockService: Service() { // TODO("Al hacer click en el menu de nav del dispositivo, se quita el bloqueo")
-    // Parámetros
-    private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest?>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
+class AppBlockService: Service() { // Independiente, necesaria para el funcionamiento de varias Tools
+    // TODO("Al hacer click en el menu de nav del dispositivo, se quita el bloqueo")
+    companion object {
+        // Atributos
+        private val storageKey = "AppBlockService"
+
+        // Variables de Control
+        var active: Boolean = false
+            private set
+
+        // Parámetros
+        private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest?>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
+
+        // Métodos de Carga / Guardado
+        fun saveState() {
+            StorageManager.saveBoolean("${storageKey}_active", active)
+            StorageManager.saveMap("${storageKey}_blockedPackages", blockedPackages)
+        }
+
+        fun loadState() {
+            blockedPackages = StorageManager.getMap("${storageKey}_blockedPackages", blockedPackages)
+            active = StorageManager.getBoolean("${storageKey}_active", active)
+
+            if (active) {
+                // Se inicia si estaba activo
+                appContext.startService(Intent(appContext, AppBlockService::class.java))
+            }
+        }
+    }
 
     // Variables de Control
     private var appBlockRequestReceiver: AppBlockRequestReceiver? = null
@@ -221,6 +249,9 @@ class AppBlockService: Service() { // TODO("Al hacer click en el menu de nav del
         handlerThread = null
         foregroundAppReceiver = null
         appBlockRequestReceiver = null
+
+        // Guarda sus datos
+        saveState()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

@@ -45,10 +45,15 @@ object LimitNotifications: Tool() {
         }
 
         // Guarda los parámetros
-        saveParameters()
+        saveState()
 
         // Inicia el servicio
-        LimitNotificationsService.start(appContext)
+        LimitNotificationsService.start()
+    }
+
+    override fun reactivate() {
+        // Inicia el servicio
+        LimitNotificationsService.start()
     }
 
     override fun deactivate() {
@@ -56,22 +61,5 @@ object LimitNotifications: Tool() {
 
         // Frena el servicio
         LimitNotificationsService.stop()
-    }
-
-    override fun reactivate() {
-        // Guarda los parámetros
-        saveParameters()
-
-        // Inicia el servicio
-        LimitNotificationsService.start(appContext)
-    }
-
-    // Métodos
-    private fun saveParameters() {
-        val prefs = appContext.getSharedPreferences("LimitNotificationsPrefs", Context.MODE_PRIVATE)
-        prefs.edit().apply {
-            putStringSet("blockedPackages", blockedPackages)
-            apply()
-        }
     }
 }
