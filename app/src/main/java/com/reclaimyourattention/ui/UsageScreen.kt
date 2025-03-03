@@ -25,7 +25,7 @@ import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UsageScreen(navController: NavController) {
+fun UsageScreen(modifier: Modifier=Modifier) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Uso") },Modifier.padding(top=40.dp)) }
     ) { paddingValues ->
@@ -42,13 +42,6 @@ fun UsageScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Button(onClick = { navController.navigate("main") }) {
-                Text("Ir a Inicio")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("tools") }) {
-                Text("Ir a Herramientas")
-            }
         }
     }
 }

@@ -54,16 +54,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.tools.ToolManager
+import com.reclaimyourattention.ui.ToolsScreens.RestRemindersScreen
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val context = this
         setContent {
             ReclaimYourAttentionTheme {
 //                PhaseScreen()
                 Naveg()
+                RestRemindersScreen()
 
                 // Permiso pa mostrar sobre otras apps
                 requestOverlayPermission(this)
@@ -90,9 +94,9 @@ class MainActivity : ComponentActivity() {
 fun Naveg(){
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MainScreen(navController) }
-        composable("tools") { ToolsScreen(navController) }
-        composable("usage") { UsageScreen(navController) }
+        composable("main") { MainScreen() }
+        composable("tools") { ToolsScreen() }
+        composable("usage") { UsageScreen() }
         //RestReminder
     }
 }
@@ -115,6 +119,7 @@ fun GreetingPreview() {
     //A
     ReclaimYourAttentionTheme {
         Naveg()
+
         Column(modifier = Modifier.fillMaxWidth().padding(top=90.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

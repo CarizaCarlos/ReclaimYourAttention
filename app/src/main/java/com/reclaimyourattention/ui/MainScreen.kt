@@ -37,7 +37,7 @@ import com.reclaimyourattention.viewmodel.PhaseViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(modifier: Modifier=Modifier) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Inicio") },Modifier.padding(top=60.dp)) }
     ) { paddingValues ->
@@ -53,13 +53,7 @@ fun MainScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
-            Button(onClick = { navController.navigate("tools") }) {
-                Text("Ir a Herramientas")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigate("usage") }) {
-                Text("Ir a Uso")
-            }
+
         }
     }
 }
