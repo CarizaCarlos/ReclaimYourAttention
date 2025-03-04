@@ -12,7 +12,14 @@ object ReintroductionPhase: Phase() {
 
 object ReintroductionTasks {
     val week1: Set<Task> = setOf(
-        // TODO()
+        Task( //TODO()
+            id = "01",
+            title = "¿Qué es la Terapía Conductual?",
+            tool = null,
+            taskPrerrequisitesID = null,
+            isMandatory = true,
+            readingMinutes = 3
+        )
     )
     // TODO("Faltan más")
 }

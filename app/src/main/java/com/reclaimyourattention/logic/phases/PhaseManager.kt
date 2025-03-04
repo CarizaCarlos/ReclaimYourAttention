@@ -24,7 +24,7 @@ object PhaseManager {
 
     fun getCurrentPhase(): Phase? = phases.getOrNull(currentPhaseIndex)
 
-    fun canAdvancePhase(): Boolean = getCurrentPhase()?.areRequirementsMet() ?: false
+    fun canAdvancePhase(): Boolean = getCurrentPhase()?.areRequirementsMet ?: false
 
     fun advancePhase(): Boolean {
         if (canAdvancePhase() && currentPhaseIndex < phases.size-1) {

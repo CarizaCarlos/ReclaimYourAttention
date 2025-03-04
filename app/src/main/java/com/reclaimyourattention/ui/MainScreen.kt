@@ -35,8 +35,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -115,14 +118,23 @@ fun MainScreen(navController: NavController? = null) {
     val filteredCompletedTasks = completedTasks.filter { it.matchesFilter(selectedFilter) }
 
     Scaffold(
-        modifier = Modifier
+        floatingActionButton = {
+            if (canAdvance) {
+                FloatingActionButton(
+                    onClick = { PhaseViewModel.onAdvancePhaseClicked() },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowForward, "Avanzar fase")
+                }
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Información de la Fase
             currentPhase?.let { phase ->
@@ -236,22 +248,14 @@ fun MainScreen(navController: NavController? = null) {
                 items(filteredCurrentTasks) { task ->
                     TaskItem(
                         task = task,
-                        onClick = {
-                            Log.d("NAVIGATION", "Tarea seleccionada: ${task.title}")
-                            TaskViewModel.selectTask(task)
-                            navController?.navigate("task")
-                        }
+                        navController = navController
                     )
                 }
                 items(filteredCompletedTasks) { task ->
                     TaskItem(
                         task = task,
                         areDone = true,
-                        onClick = {
-                            Log.d("NAVIGATION", "Tarea seleccionada: ${task.title}")
-                            TaskViewModel.selectTask(task)
-                            navController?.navigate("task")
-                        }
+                        navController = navController
                     )
                 }
             }
@@ -333,14 +337,16 @@ fun TaskItemsPreview() {
 }
 
 @Composable
-fun TaskItem(task: Task, areDone: Boolean = false, navController: NavController? = null, onClick: (() -> Unit?)? = null) {
+fun TaskItem(task: Task, areDone: Boolean = false, navController: NavController? = null) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                if (onClick != null) {
-                    onClick()
+                if (navController != null) {
+                    Log.d("NAVIGATION", "Tarea seleccionada: ${task.title}")
+                    TaskViewModel.selectTask(task)
+                    navController?.navigate("task")
                 }
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
