@@ -36,8 +36,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.getValue
@@ -52,7 +54,6 @@ import com.reclaimyourattention.viewmodel.PhaseViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -96,11 +97,6 @@ fun MainScreen(navController: NavController? = null) {
     val currentTasks by PhaseViewModel.currentTasks.observeAsState(initial = emptyList())
     val completedTasks by PhaseViewModel.completedTasks.observeAsState(initial = emptyList())
     val canAdvance by PhaseViewModel.canAdvancePhase.observeAsState(initial = false)
-
-    // Estado del filtro
-    var activeFilters by remember {
-        mutableStateOf(FilterType.entries.toSet())
-    }
 
     // Función de filtrado (dentro del composable)
     var selectedFilter by remember { mutableStateOf(FilterType.NONE) }
@@ -346,7 +342,7 @@ fun TaskItem(task: Task, areDone: Boolean = false, navController: NavController?
                 if (navController != null) {
                     Log.d("NAVIGATION", "Tarea seleccionada: ${task.title}")
                     TaskViewModel.selectTask(task)
-                    navController?.navigate("task")
+                    navController.navigate("task")
                 }
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -384,8 +380,24 @@ fun TaskItem(task: Task, areDone: Boolean = false, navController: NavController?
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Info,  // O el icono que prefieras
-                    contentDescription = "Task Icon",
+                    imageVector = if (areDone) {
+                        Icons.Default.CheckBox // Tareas completada
+                    } else {
+                        when {
+                            task.tool != null -> Icons.Default.Build // Tarea con herramienta
+                            task.isMandatory -> Icons.Default.Warning // Tarea obligatoria sin herramienta
+                            else -> Icons.Default.Star // Tarea opcional
+                        }
+                    },
+                    contentDescription = if (areDone) {
+                        "Tarea completada"
+                    } else {
+                        when {
+                            task.tool != null -> "Tarea con herramienta"
+                            task.isMandatory -> "Tarea obligatoria"
+                            else -> "Tarea opcional"
+                        }
+                    },
                     tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )

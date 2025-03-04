@@ -13,7 +13,7 @@ object PhaseViewModel: ViewModel() {
     val currentPhase: LiveData<Phase?> get() = _currentPhase
 
     private val _currentTasks = MutableLiveData<List<Task>>().apply {
-        value = PhaseManager.getCurrentPhase()?.getIncompleteTasksForCurrentWeek() ?: emptyList()
+        value = PhaseManager.getCurrentPhase()?.getAvailableIncompleteTasksForCurrentWeek() ?: emptyList()
     }
     val currentTasks: LiveData<List<Task>> = _currentTasks
 
@@ -36,7 +36,7 @@ object PhaseViewModel: ViewModel() {
         _canAdvancePhase.value = PhaseManager.canAdvancePhase()
         _currentPhase.value = PhaseManager.getCurrentPhase()
         _completedTasks.value = PhaseManager.getCurrentPhase()?.getCompleteTasks()
-        _currentTasks.value = PhaseManager.getCurrentPhase()?.getIncompleteTasksForCurrentWeek() ?: emptyList()
+        _currentTasks.value = PhaseManager.getCurrentPhase()?.getAvailableIncompleteTasksForCurrentWeek() ?: emptyList()
     }
 
     fun onAdvancePhaseClicked() {
