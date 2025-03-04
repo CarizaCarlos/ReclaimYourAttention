@@ -10,10 +10,11 @@ abstract class Phase {
     protected abstract val storageKey: String
 
     // Variables de Control
+    var areRequirementsMet: Boolean = false
+        protected set
     var currentWeekIndex: Int = 0
         protected set
-    var completedTaskIDs: MutableSet<String> = mutableSetOf()
-        protected set
+    private var completedTaskIDs: MutableSet<String> = mutableSetOf()
 
     // Métodos
     fun saveState() {
@@ -26,10 +27,6 @@ abstract class Phase {
         completedTaskIDs = StorageManager.getStringSet("${storageKey}_completedTaskIDs", completedTaskIDs) as MutableSet<String>
     }
 
-    fun areRequirementsMet(): Boolean {
-        return currentWeekIndex >= weeks.size
-    }
-
     fun completeTask(id: String) {
         // Completar la task (Guarda su id)
         completedTaskIDs.add(id)
@@ -40,12 +37,27 @@ abstract class Phase {
             .filter { it.isMandatory }
             .all { completedTaskIDs.contains(it.id) }
         if (allMandatoryCompleted) {
-            currentWeekIndex++ // TODO("Añadir el limitante de tiempo a las weeks, osea que de verdad tenga que pasar 1 week, o quizas en el manager")
+            if (currentWeekIndex+1 == weeks.size) {
+                areRequirementsMet = true
+                return
+            }
+            currentWeekIndex++
         }
     }
 
     fun unCompleteTask(id: String) {
         completedTaskIDs.remove(id)
+
+        // Verifica que al descompletar se vea reflejado areRequirementsMet
+        val isMandatoryTask = weeks.any { week ->
+            week.any { task ->
+                task.id == id && task.isMandatory
+            }
+        }
+
+        if (areRequirementsMet && isMandatoryTask) {
+            areRequirementsMet = false
+        }
     }
 
     fun getIncompleteTasksForCurrentWeek(): List<Task> {

@@ -1,12 +1,10 @@
 package com.reclaimyourattention.ui
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,8 +28,13 @@ import com.reclaimyourattention.ui.theme.Gray
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.livedata.observeAsState
+import com.reclaimyourattention.logic.phases.PhaseManager
+import com.reclaimyourattention.viewmodel.PhaseViewModel
+import com.reclaimyourattention.viewmodel.PhaseViewModel.completedTasks
 
 @Preview(showBackground = true)
 @Composable
@@ -65,6 +67,9 @@ fun TaskScreen(navController: NavController? = null) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TaskContent(task: Task, navController: NavController?) {
+    val completedTasks by PhaseViewModel.completedTasks.observeAsState(emptyList())
+    val isCompleted = completedTasks.any { it.id == task.id }
+
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -101,9 +106,33 @@ private fun TaskContent(task: Task, navController: NavController?) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Botón de Tool
+            // TODO("Botón de Tool")
+//            if (task.tool != null) {
+//                Button(
+//                    onClick = { navController?.navigate("tool/${task.tool.name}") },
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    Text("Usar Herramienta: ${task.tool.name}")
+//                }
+//                Spacer(modifier = Modifier.height(16.dp))
+//            }
 
-            // Botón de Completar / Descompletar
+            // Botón de Completar/Descompletar
+            Button(
+                onClick = {
+                    if (isCompleted) {
+                        PhaseViewModel.unCompleteTask(task.id)
+                    } else {
+                        PhaseViewModel.completeTask(task.id)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isCompleted) Gray else MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(if (isCompleted) "Descompletar" else "Completar")
+            }
         }
     }
 }
