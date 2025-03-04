@@ -25,7 +25,7 @@ import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UsageScreen(modifier: Modifier=Modifier) {
+fun UsageScreen(navController: NavController?=null) {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Uso") },Modifier.padding(top=40.dp)) }
     ) { paddingValues ->

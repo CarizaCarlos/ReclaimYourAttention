@@ -1,4 +1,4 @@
-package com.reclaimyourattention.ui.ToolsScreens
+package com.reclaimyourattention.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics

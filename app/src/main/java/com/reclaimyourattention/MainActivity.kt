@@ -30,7 +30,8 @@ import androidx.compose.material3.*
 import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.tools.ToolManager
 import com.reclaimyourattention.ui.TaskScreen
-import com.reclaimyourattention.ui.ToolsScreens.NavigationBar
+import com.reclaimyourattention.ui.NavigationBar
+import com.reclaimyourattention.ui.ToolScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,9 +54,10 @@ class MainActivity : ComponentActivity() {
                     ) {
                         // Pantallas principales
                         composable("main") { MainScreen(navController) }
-                        composable("tools") { ToolsScreen() }
-                        composable("usage") { UsageScreen() }
+                        composable("tools") { ToolsScreen(navController) }
+                        composable("usage") { UsageScreen(navController) }
                         composable("task") { TaskScreen(navController) }
+                        composable("toolInfo"){ ToolScreen(navController) }
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.reclaimyourattention.ui
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import com.reclaimyourattention.OpenAccessibilitySettingsButton
 import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.phases.Task
@@ -59,6 +61,9 @@ import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import com.reclaimyourattention.ui.theme.DarkGray
 import com.reclaimyourattention.ui.theme.Gray
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 @Preview(showSystemUi = true)
@@ -89,130 +94,44 @@ fun ToolsScreen(navController: NavController? = null) {
                 )
             Spacer(Modifier.height(25.dp))
 
-            ToolItem(AppBlock)
-            ToolItem(BlockingScheduleForApp)
-            ToolItem(LimitNotifications)
-            ToolItem(LimitTimeInApp)
-            ToolItem(LimitTimePerSession)
-            ToolItem(RestReminders)
+            ToolItem(AppBlock,navController)
+            ToolItem(BlockingScheduleForApp,navController)
+            ToolItem(LimitNotifications,navController)
+            ToolItem(LimitTimeInApp,navController)
+            ToolItem(LimitTimePerSession,navController)
+            ToolItem(RestReminders,navController)
 
             }
 
     }
 }
 
+// ViewModel para manejar la navegación y generación de TaskScreens
+object ToolViewModel : ViewModel() {
+    // Estado privado
+    private val _selectedTool = MutableStateFlow<Tool?>(null)
 
+    // Flujo público (usa asStateFlow para evitar mutaciones externas)
+    val selectedTool: StateFlow<Tool?> = _selectedTool.asStateFlow()
 
-/*
-// Funciones de ToolsScreen
-@Composable
-fun BodyContent(
-    r: RestReminders,
-    w: WaitTimeForApp,
-){
-        //RestReminder
-
-        // Estado para rastrear si está activado
-        var isReminderActive by remember { mutableStateOf(false) }
-        Button(onClick = {
-            if (isReminderActive) {
-                r.deactivate() // Llamar a la función de desactivación
-            } else {
-                r.activate(1) // Llamar a la función de activación
-            }
-            isReminderActive = !isReminderActive // Cambiar el estado
-        }) {
-            Text(if (isReminderActive) "Desactivar RestReminders" else "Activar RestReminders")
-        }
-
-        // Wait Time
-        var isWaitTimeActive by remember { mutableStateOf(false) }
-        Button(onClick = {
-            val waitSeconds = 5
-            val blockedPackages: MutableSet<String> = mutableSetOf("com.android.chrome")
-
-            if (isWaitTimeActive) {
-                w.deactivate() // Llamar a la función de desactivación
-            } else {
-                w.activate(waitSeconds, blockedPackages) // Llamar a la función de activación
-            }
-            isWaitTimeActive = !isWaitTimeActive // Cambiar el estado
-        }) {
-            Text(if (isWaitTimeActive) "Desactivar WaitTimeForApp" else "Activar WaitTimeForApp")
-        }
-}
-@Composable
-fun BotonLimitTimePerSession(s: LimitTimePerSession) {
-    // Time Sesh
-    var isSeshActive by remember { mutableStateOf(false) } // Estado para rastrear si está activado
-    Button(onClick = {
-        val activeMinutesThreshold = 1
-        val cooldownMinutes = 1
-        val blockedPackages: MutableSet<String> = mutableSetOf(
-            "com.android.chrome",
-            "com.google.android.youtube"
-        )
-
-        if (isSeshActive) {
-            s.deactivate() // Desactiva si ya está activo
-        } else {
-            s.activate(
-                activeMinutesThreshold,
-                cooldownMinutes,
-                blockedPackages
-            ) // Activa si está inactivo
-        }
-        isSeshActive = !isSeshActive // Cambiar el estado
-    }) {
-        Text(if (isSeshActive) "Desactivar LimitTimePerSession" else "Activar LimitTimePerSession")
+    // Función para actualizar la tarea
+    fun selectTool(tool: Tool) {
+        Log.d("VIEWMODEL", "Tarea almacenada: ${tool.title}")
+        _selectedTool.value = tool
     }
 }
-@Composable
-fun BotonAppBlock(b: AppBlock){
-    // AppBlock
-    var isAppBlockActive by remember { mutableStateOf(false) } // Estado para rastrear si está activado
 
-    Button(onClick = {
-        val blockedPackages = mutableSetOf("com.google.android.apps.messaging")
-
-        if (isAppBlockActive) {
-            b.deactivate() // Desactiva si ya está activo
-        } else {
-            b.activate(blockedPackages) // Activa si está inactivo
-        }
-        isAppBlockActive = !isAppBlockActive // Cambia el estado
-    }) {
-        Text(if (isAppBlockActive) "Desactivar AppBlock" else "Activar AppBlock")
-    }
-}
-@Composable
-fun ServiceButtons(context: Context) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // Botón para activar AppBlockService
-        Button(onClick = {
-            context.startService(Intent(context, AppBlockService::class.java))
-        }) {
-            Text("Activar AppBlockService")
-        }
-
-        // Botón para abrir la configuración de accesibilidad
-        OpenAccessibilitySettingsButton(context)
-    }
-}
-*/
 
 @Composable
-fun ToolItem(tool: Tool, areDone: Boolean = false, navController: NavController? = null, onClick: (() -> Unit?)? = null) {
+fun ToolItem(tool: Tool, navController: NavController? = null) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                if (onClick != null) {
-                    onClick()
+                if (navController != null) {
+                    ToolViewModel.selectTool(tool)
+                    navController.navigate("toolInfo")
                 }
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
