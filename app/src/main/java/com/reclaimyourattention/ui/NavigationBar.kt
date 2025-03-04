@@ -1,4 +1,4 @@
-package com.reclaimyourattention.ui.ToolsScreens
+package com.reclaimyourattention.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
@@ -15,9 +15,9 @@ import androidx.navigation.NavController
 @Composable
 fun NavigationBar(navController: NavController?=null) {
     val navItems = listOf(
+        NavItem("Uso", "usage", Icons.Default.Analytics),
         NavItem("Principal", "main", Icons.Default.Home),
         NavItem("Herramientas", "tools", Icons.Default.Build),
-        NavItem("Uso", "usage", Icons.Default.Analytics)
     )
 
     val currentRoute = navController?.currentBackStackEntry?.destination?.route

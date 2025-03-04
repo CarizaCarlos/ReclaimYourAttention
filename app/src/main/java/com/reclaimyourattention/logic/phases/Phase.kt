@@ -72,6 +72,18 @@ abstract class Phase {
         return currentWeekTasks.filter { !completedTaskIDs.contains(it.id) }
     }
 
+    fun getAvailableIncompleteTasksForCurrentWeek(): List<Task> {
+        val currentWeekTasks = weeks.getOrNull(currentWeekIndex) ?: emptySet()
+        return currentWeekTasks.filter { task ->
+            // Verifica si la tarea tiene prerrequisitos y si están cumplidos
+            val prerequisitesMet = task.taskPrerrequisitesID?.all { prereqId ->
+                completedTaskIDs.contains(prereqId)
+            } ?: true
+
+            !completedTaskIDs.contains(task.id) && prerequisitesMet
+        }
+    }
+
     fun getCompleteTasks(): List<Task> {
         val currentWeekTasks = weeks.getOrNull(currentWeekIndex) ?: emptySet()
         return currentWeekTasks.filter { completedTaskIDs.contains(it.id) }

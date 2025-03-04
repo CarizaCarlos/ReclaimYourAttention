@@ -30,7 +30,7 @@ import androidx.compose.material3.*
 import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.tools.ToolManager
 import com.reclaimyourattention.ui.TaskScreen
-import com.reclaimyourattention.ui.ToolsScreens.NavigationBar
+import com.reclaimyourattention.ui.NavigationBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
