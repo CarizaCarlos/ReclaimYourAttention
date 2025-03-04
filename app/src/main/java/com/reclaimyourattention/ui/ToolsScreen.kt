@@ -51,6 +51,7 @@ import com.reclaimyourattention.logic.services.AppBlockService
 import com.reclaimyourattention.logic.tools.AppBlock
 import com.reclaimyourattention.logic.tools.BlockingScheduleForApp
 import com.reclaimyourattention.logic.tools.LimitNotifications
+import com.reclaimyourattention.logic.tools.LimitTimeInApp
 import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.Tool
@@ -66,9 +67,7 @@ import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 
 fun ToolsScreen(navController: NavController? = null) {
     val context = LocalContext.current
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("Herramientas") },Modifier.padding(top=40.dp)) }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -76,15 +75,27 @@ fun ToolsScreen(navController: NavController? = null) {
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            //Información de herramienta
+            //Información herramientas
+            Text(
+                text= "Herramientas",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text="Consulte las utilidades de las diferentes herramientas así como sus estadísticas.",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            Spacer(Modifier.height(25.dp))
+
             ToolItem(AppBlock)
-            ToolItem(LimitTimePerSession)
-            ToolItem(RestReminders)
             ToolItem(BlockingScheduleForApp)
             ToolItem(LimitNotifications)
-            //BotonLimitTimePerSession(LimitTimePerSession)
-            //BotonAppBlock(AppBlock)
-            //ServiceButtons(context)
+            ToolItem(LimitTimeInApp)
+            ToolItem(LimitTimePerSession)
+            ToolItem(RestReminders)
+
             }
 
     }
