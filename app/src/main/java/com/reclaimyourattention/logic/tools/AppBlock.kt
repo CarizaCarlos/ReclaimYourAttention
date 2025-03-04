@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 
 object AppBlock: Tool() {
     // Variables Superclase
-    override val title: String = "Recordatorios para Descansar del Teléfono"
+    override val title: String = "Bloqueo de Apps"
     override val description: String = "Envía notificaciones para recordarte de descansar la vista si has estado usando mucho el celular"
     override val storageKey: String = "AppBlock"
 
