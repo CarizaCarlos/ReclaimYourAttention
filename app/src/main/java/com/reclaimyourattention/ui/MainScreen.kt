@@ -91,7 +91,6 @@ enum class FilterType {
 
 @Composable
 fun MainScreen(navController: NavController? = null) {
-
     // Estados PhaseViewModel
     val currentPhase by PhaseViewModel.currentPhase.observeAsState()
     val currentTasks by PhaseViewModel.currentTasks.observeAsState(initial = emptyList())
