@@ -3,12 +3,15 @@ package com.reclaimyourattention.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -118,11 +121,20 @@ fun GetRestRemindersParameters() {
     )
 
     // Formatear datos
-    if(activityMinutesThreshold.matches(Regex("[\\d,.]+"))){
         var param1 = activityMinutesThreshold.toInt()
-        RestReminders.activate(param1) // esto va en el onclick del boton
-    }
+        Button(
+            onClick = {if(activityMinutesThreshold.matches(Regex("[\\d,.]+")))
+                RestReminders.activate(param1)},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)){
+            Text(
+                text = "Enviar",
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
     // Botón
 }
+
 
 fun getLimitNotifications() {}
