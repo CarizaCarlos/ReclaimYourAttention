@@ -3,15 +3,30 @@ package com.reclaimyourattention.ui
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,48 +38,72 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.reclaimyourattention.OpenAccessibilitySettingsButton
 import com.reclaimyourattention.R
+import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.services.AppBlockService
 import com.reclaimyourattention.logic.tools.AppBlock
+import com.reclaimyourattention.logic.tools.BlockingScheduleForApp
+import com.reclaimyourattention.logic.tools.LimitNotifications
+import com.reclaimyourattention.logic.tools.LimitTimeInApp
 import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
+import com.reclaimyourattention.logic.tools.Tool
 import com.reclaimyourattention.logic.tools.WaitTimeForApp
+import com.reclaimyourattention.ui.theme.DarkGray
+import com.reclaimyourattention.ui.theme.Gray
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 
+
+@Preview(showSystemUi = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolsScreen(modifier: Modifier=Modifier) {
+
+fun ToolsScreen(navController: NavController? = null) {
     val context = LocalContext.current
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("Herramientas") },Modifier.padding(top=40.dp)) }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
+                .padding(paddingValues)
                 .fillMaxSize()
-                .padding(paddingValues),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
-            BodyContent(RestReminders, WaitTimeForApp)
-            BotonLimitTimePerSession(LimitTimePerSession)
-            BotonAppBlock(AppBlock)
-            ServiceButtons(context)
+            //Información herramientas
+            Text(
+                text= "Herramientas",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text="Consulte las utilidades de las diferentes herramientas así como sus estadísticas.",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            Spacer(Modifier.height(25.dp))
+
+            ToolItem(AppBlock)
+            ToolItem(BlockingScheduleForApp)
+            ToolItem(LimitNotifications)
+            ToolItem(LimitTimeInApp)
+            ToolItem(LimitTimePerSession)
+            ToolItem(RestReminders)
+
             }
-        Column( modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues) ,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-        }
+
     }
 }
 
+
+
+/*
 // Funciones de ToolsScreen
 @Composable
 fun BodyContent(
@@ -163,32 +202,68 @@ fun ServiceButtons(context: Context) {
         OpenAccessibilitySettingsButton(context)
     }
 }
+*/
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview(showSystemUi = true)
-fun previewTool() {
-    ReclaimYourAttentionTheme {
-        Scaffold(
-            topBar = { TopAppBar(title = { Text("Herramientas") }) }
-        ) { paddingValues ->
+fun ToolItem(tool: Tool, areDone: Boolean = false, navController: NavController? = null, onClick: (() -> Unit?)? = null) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable {
+                if (onClick != null) {
+                    onClick()
+                }
+            },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .background(DarkGray),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(56.dp)
+                    .fillMaxHeight()  // Llena la altura intrínseca del Row (definida por el contenido de la derecha)
+                    .background(
+                        color = Gray,
+                        shape = RoundedCornerShape(
+                            topStart = 8.dp,
+                            bottomStart = 8.dp,
+                            topEnd = 0.dp,
+                            bottomEnd = 0.dp
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,  // O el icono que prefieras
+                    contentDescription = "Task Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .fillMaxWidth()
+                    .padding(8.dp)
             ) {
-                BodyContent(RestReminders, WaitTimeForApp)
-                BotonLimitTimePerSession(LimitTimePerSession)
-                BotonAppBlock(AppBlock)
+                Text(
+                    modifier = Modifier.padding(10.dp),
+                    text = tool.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.White,
+
+                    )
             }
         }
     }
 }
 
-@Composable
-fun tool(appName: String, timeUsed: Int) {
-    Row {
 
-    }
-}
