@@ -1,28 +1,16 @@
 package com.reclaimyourattention.ui.ToolsScreens
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
-import com.reclaimyourattention.ui.MainScreen
-import com.reclaimyourattention.ui.ToolsScreen
-import com.reclaimyourattention.ui.UsageScreen
 
 @Composable
 fun NavigationBar(navController: NavController?=null) {
@@ -51,8 +39,8 @@ fun NavigationBar(navController: NavController?=null) {
     }
 }
 
-@Preview
-@Composable
-fun Preview(){
-    NavigationBar()
-}
+data class NavItem(
+    val label: String,
+    val route: String,
+    val icon: ImageVector,
+)
