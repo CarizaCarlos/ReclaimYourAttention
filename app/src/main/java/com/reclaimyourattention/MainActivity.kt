@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.*
 import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.tools.ToolManager
-import com.reclaimyourattention.ui.theme.TaskScreen
+import com.reclaimyourattention.ui.TaskScreen
 import com.reclaimyourattention.ui.ToolsScreens.NavigationBar
 
 class MainActivity : ComponentActivity() {
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
                         composable("main") { MainScreen(navController) }
                         composable("tools") { ToolsScreen() }
                         composable("usage") { UsageScreen() }
-                        composable("task") { TaskScreen() }
+                        composable("task") { TaskScreen(navController) }
                     }
                 }
             }
