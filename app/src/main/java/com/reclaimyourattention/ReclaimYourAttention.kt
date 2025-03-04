@@ -16,9 +16,5 @@ class ReclaimYourAttention: Application() {
 
         // Inicializa el Application Context
         ReclaimYourAttention.appContext = applicationContext
-
-        // Carga los estados guardados
-        PhaseManager.loadStates()
-        ToolManager.loadStates()
     }
 }

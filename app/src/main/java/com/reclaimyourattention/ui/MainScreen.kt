@@ -54,6 +54,7 @@ import com.reclaimyourattention.viewmodel.PhaseViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.reclaimyourattention.logic.tools.LimitNotifications
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -131,6 +132,27 @@ fun MainScreen(navController: NavController? = null) {
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // TODO("QUITAR TEST")
+            Button(
+                onClick = {
+                    LimitNotifications.activate(mutableSetOf("com.mand.notitest"))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (selectedFilter == FilterType.OPCIONALES) {
+                        MaterialTheme.colorScheme.tertiary
+                    } else {
+                        Gray
+                    }
+                )
+            ) {
+                Text(
+                    text = "Test",
+                )
+            }
+
             // Información de la Fase
             currentPhase?.let { phase ->
                 Text(

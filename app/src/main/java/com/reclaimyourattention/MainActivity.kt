@@ -37,6 +37,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Carga los estados guardados
+        PhaseManager.loadStates()
+        ToolManager.loadStates()
+
+        // startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) TODO("Permisos")
+
         enableEdgeToEdge()
         setContent {
             ReclaimYourAttentionTheme {

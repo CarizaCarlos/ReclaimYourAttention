@@ -22,7 +22,7 @@ object LimitNotifications: Tool() {
     }
 
     override fun loadState() {
-        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages).toMutableSet()
         super.loadState()
     }
 
