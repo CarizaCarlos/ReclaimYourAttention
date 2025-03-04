@@ -1,5 +1,6 @@
 package com.reclaimyourattention.logic.phases
 
+import android.util.Log
 import com.reclaimyourattention.logic.StorageManager
 
 abstract class Phase {
@@ -18,13 +19,19 @@ abstract class Phase {
 
     // Métodos
     fun saveState() {
+        StorageManager.saveBoolean("${storageKey}_areRequirementsMet", areRequirementsMet)
         StorageManager.saveInt("${storageKey}_currentWeekIndex", currentWeekIndex)
         StorageManager.saveStringSet("${storageKey}_completedTaskIDs", completedTaskIDs)
+
+        Log.d(storageKey, "Datos guardados: areRequirementsMet: $areRequirementsMet, currentWeekIndex: $currentWeekIndex, completedTaskIDs: $completedTaskIDs")
     }
 
     fun loadState() {
+        areRequirementsMet = StorageManager.getBoolean("${storageKey}_areRequirementsMet", areRequirementsMet)
         currentWeekIndex = StorageManager.getInt("${storageKey}_currentWeekIndex", currentWeekIndex)
-        completedTaskIDs = StorageManager.getStringSet("${storageKey}_completedTaskIDs", completedTaskIDs) as MutableSet<String>
+        completedTaskIDs = StorageManager.getStringSet("${storageKey}_completedTaskIDs", completedTaskIDs).toMutableSet()
+
+        Log.d(storageKey, "Datos cargados: areRequirementsMet: $areRequirementsMet, currentWeekIndex: $currentWeekIndex, completedTaskIDs: $completedTaskIDs")
     }
 
     fun completeTask(id: String) {

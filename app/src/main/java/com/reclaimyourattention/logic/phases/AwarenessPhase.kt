@@ -40,12 +40,35 @@ object AwarenessTasks {
         ),
         Task(
             id = "04",
-            title = "Rechaza la Convenencia",
+            title = "¿Cuánto Tiempo te Roba tu Teléfono?",
             tool = null,
-            taskPrerrequisitesID = null,
-            isMandatory = false,
+            taskPrerrequisitesID = setOf("02"),
+            isMandatory = true,
+            readingMinutes = 1
+        ),
+        Task(
+            id = "05",
+            title = "Beneficios de la Escala de Grices y Cómo Activarla",
+            tool = null,
+            taskPrerrequisitesID = setOf("02"),
+            isMandatory = true,
+            readingMinutes = 4
+        ),
+        Task(
+            id = "06",
+            title = "Controla las Notificaciones",
+            tool = ToolType.LIMIT_NOTIFICATIONS,
+            taskPrerrequisitesID = setOf("02"),
+            isMandatory = true,
+            readingMinutes = 1
+        ),
+        Task(
+            id = "07",
+            title = "Añade Recordatorios para Descansar del Teléfono",
+            tool = ToolType.REST_REMINDERS,
+            taskPrerrequisitesID = setOf("02"),
+            isMandatory = true,
             readingMinutes = 1
         )
-        // TODO("Faltan más")
     )
 }

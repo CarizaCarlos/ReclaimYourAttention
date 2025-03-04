@@ -3,7 +3,7 @@ package com.reclaimyourattention.logic.phases
 object ReintroductionPhase: Phase() {
     // Atributos
     override val title: String = "Fase de Reintroducción"
-    override val description: String = ""
+    override val description: String = "En ésta última fase nos centraremos en el autocontrol y mantener lo que has logrado hasta ahora, además reduciremos poco a poco las restricciones hasta donde te sientas nuevamente cómodo con el uso de tu celular"
     override val weeks: List<Set<Task>> = listOf(
         ReintroductionTasks.week1
     )

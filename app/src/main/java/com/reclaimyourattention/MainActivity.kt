@@ -35,6 +35,7 @@ import com.reclaimyourattention.ui.ToolsScreens.NavigationBar
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             ReclaimYourAttentionTheme {
