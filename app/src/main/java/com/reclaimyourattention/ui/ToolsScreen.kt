@@ -95,7 +95,7 @@ fun ToolsScreen(navController: NavController? = null) {
 
             ToolItem(AppBlock,navController)
             ToolItem(LimitNotifications,navController)
-            ToolItem(LimitTimeInApp,navController)
+            ToolItem(WaitTimeForApp,navController)
             ToolItem(LimitTimePerSession,navController)
             ToolItem(RestReminders,navController)
 

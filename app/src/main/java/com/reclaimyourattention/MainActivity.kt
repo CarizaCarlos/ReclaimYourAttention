@@ -24,7 +24,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.reclaimyourattention.ui.MainScreen
 import com.reclaimyourattention.ui.ToolsScreen
-import com.reclaimyourattention.ui.UsageScreen
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
@@ -85,7 +84,6 @@ class MainActivity : ComponentActivity() {
                         // Pantallas principales
                         composable("main") { MainScreen(navController) }
                         composable("tools") { ToolsScreen(navController) }
-                        composable("usage") { UsageScreen(navController) }
                         composable("task") { TaskScreen(navController) }
                         composable("toolInfo"){ ToolScreen(navController) }
                     }

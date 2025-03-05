@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flow
 
 
 class AppBlockViewModel(
-    initialBlockedPackages: Set<String> // Nuevo parámetro inicial
+    initialBlockedPackages: Set<String>
 ) : ViewModel() {
     private val _blockedPackages = mutableStateOf(initialBlockedPackages)
     val blockedPackages: State<Set<String>> = _blockedPackages
@@ -27,6 +27,4 @@ class AppBlockViewModel(
             if (contains(packageName)) remove(packageName) else add(packageName)
         }
     }
-
-
 }

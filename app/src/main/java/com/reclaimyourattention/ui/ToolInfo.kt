@@ -29,6 +29,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -42,7 +43,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,12 +56,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.services.ToolType
+import com.reclaimyourattention.logic.tools.AppBlock
 import com.reclaimyourattention.logic.tools.AppInfo
 import com.reclaimyourattention.logic.tools.LimitNotifications
 import com.reclaimyourattention.logic.tools.LimitTimeInApp
 import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.Tool
+import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModel
 import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModelFactory
 import com.reclaimyourattention.ui.theme.Gray
@@ -117,7 +124,9 @@ fun ToolContent(tool: Tool, navController: NavController?){
             when (tool) {
                 is RestReminders -> GetRestRemindersParameters()
                 is LimitNotifications -> GetLimitNotifications()
-                is LimitTimeInApp -> GetLimitTimeInApp()
+                is LimitTimePerSession -> GetLimitTimePerSession()
+                is AppBlock -> GetAppBlock()
+                is WaitTimeForApp -> GetWaitTimeForApp()
             }
 
             Button(
@@ -126,6 +135,101 @@ fun ToolContent(tool: Tool, navController: NavController?){
                 Text("Desactivar")
             }
         }
+    }
+}
+
+@Composable
+fun GetLimitTimePerSession() {
+    var cooldownMinutes = LimitTimePerSession.cooldownMinutes
+    NumberInput(
+        label = "Minutos de Enfriamiento",
+        value = cooldownMinutes,
+        onValueChange = { cooldownMinutes = it }
+    )
+
+    var activeMinutesTreshold = LimitTimePerSession.activeMinutesTreshold
+    NumberInput(
+        label = "Minutos de Uso Por Sesión",
+        value = activeMinutesTreshold,
+        onValueChange = { activeMinutesTreshold = it }
+    )
+
+    var blockedPackages = LimitTimePerSession.blockedPackages
+    GetBlockedPackages(
+        initialBlockedPackages = blockedPackages,
+        onBlockedSelected = { newSelection ->
+            blockedPackages =
+                newSelection.toMutableSet()
+        }
+    )
+
+    // Botón de Activación
+    Button(
+        onClick = { LimitTimePerSession.activate(activeMinutesTreshold, cooldownMinutes, blockedPackages) }
+    ) {
+        Text("Activar")
+    }
+}
+
+@Composable
+fun GetRestRemindersParameters() {
+    var activityMinutesThreshold = RestReminders.activityMinutesThreshold
+    NumberInput(
+        label = "Minutos de Actividad",
+        value = activityMinutesThreshold,
+        onValueChange = { activityMinutesThreshold = it }
+    )
+
+    // Botón de Activación
+    Button(
+        onClick = { RestReminders.activate(activityMinutesThreshold) }
+    ) {
+        Text("Activar")
+    }
+}
+
+@Composable
+fun GetWaitTimeForApp() {
+    var waitSeconds = WaitTimeForApp.waitSeconds
+    NumberInput(
+        label = "Segundos de Espera",
+        value = waitSeconds,
+        onValueChange = { waitSeconds = it }
+    )
+
+    var blockedPackages = WaitTimeForApp.blockedPackages
+    GetBlockedPackages(
+        initialBlockedPackages = blockedPackages,
+        onBlockedSelected = { newSelection ->
+            blockedPackages =
+                newSelection.toMutableSet()
+        }
+    )
+
+    // Botón de Activación
+    Button(
+        onClick = { WaitTimeForApp.activate(waitSeconds, blockedPackages) }
+    ) {
+        Text("Activar")
+    }
+}
+
+@Composable
+fun GetAppBlock() {
+    var blockedPackages = AppBlock.blockedPackages
+    GetBlockedPackages(
+        initialBlockedPackages = blockedPackages, // Envía el estado actual
+        onBlockedSelected = { newSelection ->
+            blockedPackages =
+                newSelection.toMutableSet() // Actualiza el estado padre
+        }
+    )
+
+    // Botón de Activación
+    Button(
+        onClick = { AppBlock.activate(blockedPackages) }
+    ) {
+        Text("Activar")
     }
 }
 
@@ -140,11 +244,43 @@ fun GetLimitNotifications() {
         }
     )
 
+    // Botón de Activación
     Button(
         onClick = { LimitNotifications.activate(blockedPackages) }
     ) {
         Text("Activar")
     }
+}
+
+@Composable
+fun NumberInput(
+    label: String,
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var text by remember { mutableStateOf(value.toString()) }
+
+    OutlinedTextField(
+        value = text,
+        onValueChange = { newValue ->
+            val filtered = newValue.filter { it.isDigit() }
+            text = filtered
+            onValueChange(filtered.toIntOrNull() ?: 0)
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        visualTransformation = filterNonNumericCharacters(),
+        modifier = modifier,
+        label = { Text(label) }
+    )
+}
+
+private fun filterNonNumericCharacters() = VisualTransformation { text ->
+    val filtered = text.text.filter { it.isDigit() }
+    TransformedText(
+        AnnotatedString(filtered),
+        OffsetMapping.Identity
+    )
 }
 
 @Composable
@@ -222,47 +358,6 @@ fun GetBlockedPackages(
 }
 
 @Composable
-fun GetRestRemindersParameters() {
-    // Ingreso de datos
-    var activityMinutesThreshold by remember { mutableStateOf("0") }
-    val parsedInt = remember { mutableIntStateOf(0) } // Variable donde se almacenará el entero
-    val defaultValue = 0
-    TextField(
-        value = activityMinutesThreshold,
-        onValueChange =
-        { newValue ->
-            if (newValue.matches(Regex("[\\d,.]+"))) { // Solo permite dígitos numéricos
-                activityMinutesThreshold = newValue
-
-                parsedInt.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
-                if (parsedInt.intValue == defaultValue && newValue.isNotEmpty()) {
-                    activityMinutesThreshold = ""
-
-                }
-            }
-        }, // Verificar que sea un numero
-
-        label = { Text("Label") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
-    )
-        Spacer(Modifier.heightIn(26.dp))
-    // Formatear datos y botón
-        var param1 = activityMinutesThreshold.toInt()
-        Button(
-            onClick = {if(activityMinutesThreshold.matches(Regex("[\\d,.]+")))
-                RestReminders.activate(param1)},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)){
-            Text(
-                text = "Enviar",
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
-}
-
-@Composable
 fun AppListItem(app: AppInfo, isBlocked: Boolean, onToggle: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -279,131 +374,4 @@ fun AppListItem(app: AppInfo, isBlocked: Boolean, onToggle: () -> Unit) {
         )
         Text(app.name)
     }
-}
-
-@Composable
-fun GetLimitTimeInApp(){
-    var maxTotalMinutes by remember { mutableStateOf("0") }
-    val parsedInt = remember { mutableIntStateOf(0) }
-    var maxForEachMinutes by remember { mutableStateOf("0") }
-    val parsedInt2 = remember { mutableIntStateOf(0) }
-    val defaultValue = 0
-
-    TextField(
-        value = maxTotalMinutes,
-        onValueChange =
-        { newValue ->
-            if (newValue.matches(Regex("[\\d,.]+"))) { // Solo permite dígitos numéricos
-                maxTotalMinutes = newValue
-
-                parsedInt.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
-                if (parsedInt.intValue == defaultValue && newValue.isNotEmpty()) {
-                    maxTotalMinutes = ""
-                }
-            }
-        },
-        label = { Text("Label") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
-    )
-    Spacer(Modifier.heightIn(26.dp))
-
-    TextField(
-        value = maxForEachMinutes,
-        onValueChange =
-        { newValue ->
-            if (newValue.matches(Regex("[\\d,.]+"))) {
-                maxForEachMinutes = newValue
-
-                parsedInt2.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
-                if (parsedInt2.intValue == defaultValue && newValue.isNotEmpty()) {
-                    maxForEachMinutes = ""
-                }
-            }
-        },
-        label = { Text("Label") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
-    )
-
-    var blockedPackages = LimitNotifications.blockedPackages
-    GetBlockedPackages(
-        initialBlockedPackages = blockedPackages, // Envía el estado actual
-        onBlockedSelected = { newSelection ->
-            blockedPackages =
-                newSelection.toMutableSet() // Actualiza el estado padre
-        }
-    )
-
-    // TODO("POner bien los parametros en orden")
-//    Button(
-//        onClick = { LimitTimeInApp.activate(blockedPackages) }
-//    ) {
-//        Text("Activar")
-//    }
-}
-
-@Composable
-fun GetLimitTimePerSession(){
-    var activeMinutesThreshold by remember { mutableStateOf("0") }
-    val parsedInt = remember { mutableIntStateOf(0) } // Variable donde se almacenará el entero
-    var cooldownMinutes by remember { mutableStateOf("0") }
-    val parsedInt2 = remember { mutableIntStateOf(0) } // Variable donde se almacenará el entero
-
-    val defaultValue = 0
-    TextField(
-        value = activeMinutesThreshold,
-        onValueChange =
-        { newValue ->
-            if (newValue.matches(Regex("[\\d,.]+"))) { // Solo permite dígitos numéricos
-                activeMinutesThreshold = newValue
-
-                parsedInt.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
-                if (parsedInt.intValue == defaultValue && newValue.isNotEmpty()) {
-                    activeMinutesThreshold = ""
-
-                }
-            }
-        }, // Verificar que sea un numero
-
-        label = { Text("Label") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
-    )
-    Spacer(Modifier.heightIn(36.dp))
-    TextField(
-        value = cooldownMinutes,
-        onValueChange =
-        { newValue ->
-            if (newValue.matches(Regex("[\\d,.]+"))) { // Solo permite dígitos numéricos
-                cooldownMinutes = newValue
-
-                parsedInt2.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
-                if (parsedInt2.intValue == defaultValue && newValue.isNotEmpty()) {
-                    cooldownMinutes = ""
-
-                }
-            }
-        },
-
-        label = { Text("Label") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
-    )
-
-    var blockedPackages = LimitNotifications.blockedPackages
-    GetBlockedPackages(
-        initialBlockedPackages = blockedPackages, // Envía el estado actual
-        onBlockedSelected = { newSelection ->
-            blockedPackages =
-                newSelection.toMutableSet() // Actualiza el estado padre
-        }
-    )
-
-    // TODO("POner bien los parametros en orden")
-//    Button(
-//        onClick = { LimitTimeInApp.activate(blockedPackages) }
-//    ) {
-//        Text("Activar")
-//    }
 }
