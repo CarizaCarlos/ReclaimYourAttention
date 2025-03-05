@@ -45,7 +45,7 @@ object AppBlock: Tool() {
             // Envia un unblockRequest a AppBlockService para resetear las restricciones actuales
             val intent = Intent("UNBLOCK_REQUEST")
                 .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
-                .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
+                .putExtra("toolType", Json.encodeToString(ToolType.LIMIT_DAILY))
             appContext.sendBroadcast(intent)
 
             // Actualzia los parámetros
@@ -71,7 +71,7 @@ object AppBlock: Tool() {
         )
         val intent = Intent("BLOCK_REQUEST")
             .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
-            .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
+            .putExtra("toolType", Json.encodeToString(ToolType.LIMIT_DAILY))
             .putExtra("blockRequest", Json.encodeToString(blockRequest))
         appContext.sendBroadcast(intent)
 
@@ -87,7 +87,7 @@ object AppBlock: Tool() {
         )
         val intent = Intent("BLOCK_REQUEST")
             .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
-            .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
+            .putExtra("toolType", Json.encodeToString(ToolType.LIMIT_DAILY))
             .putExtra("blockRequest", Json.encodeToString(blockRequest))
         appContext.sendBroadcast(intent)
 
@@ -100,7 +100,7 @@ object AppBlock: Tool() {
         // Envia un unblockRequest a AppBlockService
         val intent = Intent("UNBLOCK_REQUEST")
             .putExtra("blockedPackages", Json.encodeToString(blockedPackages))
-            .putExtra("toolType", Json.encodeToString(ToolType.INDEFINITELY))
+            .putExtra("toolType", Json.encodeToString(ToolType.LIMIT_DAILY))
         appContext.sendBroadcast(intent)
     }
 }

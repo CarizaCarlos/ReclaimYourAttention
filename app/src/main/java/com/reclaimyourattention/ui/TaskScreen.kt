@@ -33,6 +33,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.livedata.observeAsState
 import com.reclaimyourattention.logic.phases.PhaseManager
+import com.reclaimyourattention.logic.tools.LimitNotifications
+import com.reclaimyourattention.logic.tools.LimitTimeInApp
+import com.reclaimyourattention.logic.tools.LimitTimePerSession
+import com.reclaimyourattention.logic.tools.RestReminders
+import com.reclaimyourattention.logic.tools.Tool
+import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import com.reclaimyourattention.viewmodel.PhaseViewModel
 import com.reclaimyourattention.viewmodel.PhaseViewModel.completedTasks
 
@@ -106,16 +112,26 @@ private fun TaskContent(task: Task, navController: NavController?) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // TODO("Botón de Tool")
-//            if (task.tool != null) {
-//                Button(
-//                    onClick = { navController?.navigate("tool/${task.tool.name}") },
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text("Usar Herramienta: ${task.tool.name}")
-//                }
-//                Spacer(modifier = Modifier.height(16.dp))
-//            }
+            if (task.tool != null) {
+                val tool = when (task.tool) {
+                    ToolType.WAIT_TIME -> WaitTimeForApp
+                    ToolType.LIMIT_SESSION -> LimitTimePerSession
+                    ToolType.LIMIT_DAILY -> LimitTimeInApp
+                    ToolType.REST_REMINDERS -> RestReminders
+                    ToolType.LIMIT_NOTIFICATIONS -> LimitNotifications
+                }
+
+                Button(
+                    onClick = {
+                        ToolViewModel.selectTool(tool)
+                        navController?.navigate("toolInfo")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Ir a la Herramienta")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             // Botón de Completar/Descompletar
             Button(

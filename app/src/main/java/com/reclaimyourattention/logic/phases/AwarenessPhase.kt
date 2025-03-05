@@ -25,7 +25,7 @@ object AwarenessTasks {
         Task(
             id = "02",
             title = "Autodiagnóstico",
-            tool = ToolType.DIAGNOSTIC,
+            tool = null,
             taskPrerrequisitesID = setOf("01"),
             isMandatory = true,
             readingMinutes = 1
