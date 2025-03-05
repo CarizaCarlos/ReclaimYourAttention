@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.services.ToolType
 import com.reclaimyourattention.logic.tools.AppInfo
@@ -110,7 +109,7 @@ fun ToolContent(tool: Tool, navController: NavController?){
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(36.dp))
-            GetLimitNotifications()
+            GetBlockedPackages()
             //when (tool) {
             //is RestReminders -> GetRestRemindersParameters()
             //is LimitNotifications -> GetLimitNotifications()
@@ -118,6 +117,63 @@ fun ToolContent(tool: Tool, navController: NavController?){
         }
     }
 }
+
+@Composable
+fun GetBlockedPackages() {
+    val context = LocalContext.current
+    val viewModel: AppBlockViewModel = viewModel { AppBlockViewModel(context) }
+    val installedApps: List<AppInfo> = viewModel.installedApps.collectAsState(initial = emptyList()).value
+    val blockedPackages by viewModel.blockedPackages
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Apps Bloqueadas:",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
+            items(blockedPackages.toList()) { pkg ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                ) {
+                    Text(
+                        text = installedApps.firstOrNull { it.packageName == pkg }?.name ?: pkg,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(
+                        onClick = { viewModel.toggleBlock(pkg) }
+                    ) {
+                        Icon(Icons.Default.Delete, "Desbloquear")
+                    }
+                }
+            }
+        }
+
+        Text(
+            text = "Añadir Apps:",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
+            items(installedApps) { app ->
+                // Si no está bloqueada, la meustra
+                if (!blockedPackages.contains(app.packageName)) {
+                    AppListItem(
+                        app = app,
+                        isBlocked = blockedPackages.contains(app.packageName),
+                        onToggle = { viewModel.toggleBlock(app.packageName) }
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun GetRestRemindersParameters() {
     // Ingreso de datos
@@ -162,83 +218,7 @@ fun GetRestRemindersParameters() {
 
 @Composable
 fun GetLimitNotifications() {
-    val context = LocalContext.current
-    val viewModel: AppBlockViewModel = viewModel { AppBlockViewModel(context) }
-    val installedApps: List<AppInfo> = viewModel.installedApps.collectAsState(initial = emptyList()).value
-    val blockedPackages by viewModel.blockedPackages
 
-    // Estado para el input manual
-    val newPackageName = remember { mutableStateOf("") }
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        // Sección de entrada manual
-        TextField(
-            value = newPackageName.value,
-            onValueChange = { newValue ->
-                if (newValue.matches(Regex("^[a-zA-Z0-9.]*$"))) {
-                    newPackageName.value = newValue
-                }
-            },
-            label = { Text("Ingresar paquete manualmente") },
-            placeholder = { Text("Ej: com.whatsapp") },
-            trailingIcon = {
-                if (newPackageName.value.isNotEmpty()) {
-                    IconButton(
-                        onClick = {
-                            viewModel.toggleBlock(newPackageName.value)
-                            newPackageName.value = ""
-                        }
-                    ) {
-                        Icon(Icons.Default.Add, "Añadir manualmente")
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        // Lista de aplicaciones instaladas
-        Text(
-            text = "Seleccionar aplicaciones:",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
-            items(installedApps) { app -> // Aquí 'app' es de tipo AppInfo
-                AppListItem(
-                    app = app,
-                    isBlocked = blockedPackages.contains(app.packageName),
-                    onToggle = { viewModel.toggleBlock(app.packageName) }
-                )
-            }
-        }
-
-        // Lista de paquetes bloqueados
-        Text("Paquetes bloqueados:",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(vertical = 8.dp))
-
-        LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
-            items(blockedPackages.toList()) { pkg ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)
-                ) {
-                    Text(
-                        text = installedApps.firstOrNull { it.packageName == pkg }?.name ?: pkg,
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(
-                        onClick = { viewModel.toggleBlock(pkg) }
-                    ) {
-                        Icon(Icons.Default.Delete, "Desbloquear")
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable
