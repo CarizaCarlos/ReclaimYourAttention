@@ -3,6 +3,7 @@ package com.reclaimyourattention
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
@@ -48,6 +49,12 @@ class MainActivity : ComponentActivity() {
         ToolManager.loadStates()
 
         // Permisos TODO()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                1001
+            )
+        }
         startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         // startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
 

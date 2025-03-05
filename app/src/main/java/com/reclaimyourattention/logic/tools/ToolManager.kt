@@ -2,11 +2,10 @@ package com.reclaimyourattention.logic.tools
 
 import android.util.Log
 
-object ToolManager { // TODO("quizás para activar el AppBlock service, verificar lo de permisos o esas , tooltype priority traerlo pa'ca")
+object ToolManager { // TODO("tooltype priority traerlo pa'ca")
     // Atributos
     private val tools: Set<Tool> = setOf(
         AppBlock,
-        BlockingScheduleForApp,
         LimitNotifications,
         LimitTimeInApp,
         LimitTimePerSession,

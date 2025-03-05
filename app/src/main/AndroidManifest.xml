@@ -29,13 +29,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <service
-            android:name=".logic.services.BlockingScheduleForAppService"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="explanation_for_special_use" />
-        </service>
         <service android:name=".logic.services.LimitNotificationsService"
             android:label="LimitNotificationsService"
             android:exported="true"

@@ -56,6 +56,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.reclaimyourattention.logic.tools.AppBlock
 import com.reclaimyourattention.logic.tools.LimitNotifications
+import com.reclaimyourattention.logic.tools.RestReminders
+import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -136,7 +138,7 @@ fun MainScreen(navController: NavController? = null) {
             // TODO("QUITAR TEST")
             Button(
                 onClick = {
-                    AppBlock.activate(mutableSetOf("com.mand.notitest"))
+                    RestReminders.activate(1)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

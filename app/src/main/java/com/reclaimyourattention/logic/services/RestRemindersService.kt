@@ -67,7 +67,7 @@ class RestRemindersService: Service() { // Depende de RestReminders Tool
         screenReceiver = ScreenReceiver(
             onScreenOn = {
                 // Detiene el reinicio de la cuenta (Si no se ha reiniciado)
-                handler?.removeCallbacksAndMessages(null)
+                handler?.removeCallbacks(countRunnable)
 
                 // Empieza a contar el tiempo de actividad
                 handler?.postDelayed(countRunnable, countRunnable.refreshSeconds.toLong()*1000)
@@ -75,8 +75,8 @@ class RestRemindersService: Service() { // Depende de RestReminders Tool
                 Log.d("RestRemindersService", "Se Inicia el Conteo") // Log
             },
             onScreenOff = {
-                // Frena el conteo TODO("Verificar que exista un callback que borrar, porque osino se activa el handler innecesariamente")
-                handler?.removeCallbacksAndMessages(null)
+                // Frena el conteo
+                handler?.removeCallbacks(countRunnable)
 
                 // Reinicia la cuenta si se supera el threshold
                 handler?.postDelayed({
@@ -88,6 +88,12 @@ class RestRemindersService: Service() { // Depende de RestReminders Tool
                 Log.d("RestRemindersService", "Empieza la Espera de Inactividad") // Log
             }
         )
+
+        // Crea el filtro y registra el Receiver
+        val filter = IntentFilter(Intent.ACTION_SCREEN_ON).apply {
+            addAction(Intent.ACTION_SCREEN_OFF)
+        }
+        registerReceiver(screenReceiver, filter)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -102,18 +108,13 @@ class RestRemindersService: Service() { // Depende de RestReminders Tool
         // Inicia el servicio en primer plano
         startForeground(1, persistentNotification)
 
-        // Crea el filtro y registra el Receiver
-        val filter = IntentFilter(Intent.ACTION_SCREEN_ON).apply {
-            addAction(Intent.ACTION_SCREEN_OFF)
-        }
-        registerReceiver(screenReceiver, filter)
-
         // Recupera los parámetros solicitados
         activityMinutesThreshold = RestReminders.activityMinutesThreshold
 
         Log.d("RestRemindersService", "activityMinutesThreshold: $activityMinutesThreshold") // Log
 
         // Empieza el proceso por primera vez
+        handler?.removeCallbacksAndMessages(null)
         handler?.postDelayed(countRunnable, countRunnable.refreshSeconds.toLong()*1000)
 
         Log.d("RestRemindersService", "Servicio Activado") // Log

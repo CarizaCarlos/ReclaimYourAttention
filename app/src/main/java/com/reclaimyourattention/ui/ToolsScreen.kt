@@ -51,7 +51,6 @@ import com.reclaimyourattention.R
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.services.AppBlockService
 import com.reclaimyourattention.logic.tools.AppBlock
-import com.reclaimyourattention.logic.tools.BlockingScheduleForApp
 import com.reclaimyourattention.logic.tools.LimitNotifications
 import com.reclaimyourattention.logic.tools.LimitTimeInApp
 import com.reclaimyourattention.logic.tools.LimitTimePerSession
@@ -95,7 +94,6 @@ fun ToolsScreen(navController: NavController? = null) {
             Spacer(Modifier.height(25.dp))
 
             ToolItem(AppBlock,navController)
-            ToolItem(BlockingScheduleForApp,navController)
             ToolItem(LimitNotifications,navController)
             ToolItem(LimitTimeInApp,navController)
             ToolItem(LimitTimePerSession,navController)
