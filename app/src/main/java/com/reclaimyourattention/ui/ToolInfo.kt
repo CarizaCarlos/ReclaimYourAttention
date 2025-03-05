@@ -53,6 +53,7 @@ import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.services.ToolType
 import com.reclaimyourattention.logic.tools.AppInfo
 import com.reclaimyourattention.logic.tools.LimitNotifications
+import com.reclaimyourattention.logic.tools.LimitTimeInApp
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.Tool
 import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModel
@@ -109,11 +110,11 @@ fun ToolContent(tool: Tool, navController: NavController?){
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(36.dp))
-            GetBlockedPackages()
-            //when (tool) {
-            //is RestReminders -> GetRestRemindersParameters()
-            //is LimitNotifications -> GetLimitNotifications()
-        //}
+            when (tool) {
+                is RestReminders -> GetRestRemindersParameters()
+                LimitNotifications -> GetLimitNotifications()
+                LimitTimeInApp -> GetLimitTimeInApp()
+        }
         }
     }
 }
@@ -199,7 +200,7 @@ fun GetRestRemindersParameters() {
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         placeholder = { Text("0") } // Placeholder para indicar el valor esperado
     )
-
+        Spacer(Modifier.heightIn(26.dp))
     // Formatear datos y botón
         var param1 = activityMinutesThreshold.toInt()
         Button(
@@ -238,4 +239,51 @@ fun AppListItem(app: AppInfo, isBlocked: Boolean, onToggle: () -> Unit) {
         )
         Text(app.name)
     }
+}
+
+
+@Composable
+fun GetLimitTimeInApp(){
+    var maxTotalMinutes by remember { mutableStateOf("0") }
+    val parsedInt = remember { mutableIntStateOf(0) }
+    var maxForEachMinutes by remember { mutableStateOf("0") }
+    val parsedInt2 = remember { mutableIntStateOf(0) }
+    val defaultValue = 0
+
+    TextField(
+        value = maxTotalMinutes,
+        onValueChange =
+        { newValue ->
+            if (newValue.matches(Regex("[\\d,.]+"))) { // Solo permite dígitos numéricos
+                maxTotalMinutes = newValue
+
+                parsedInt.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
+                if (parsedInt.intValue == defaultValue && newValue.isNotEmpty()) {
+                    maxTotalMinutes = ""
+                }
+            }
+        },
+        label = { Text("Label") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
+    )
+    Spacer(Modifier.heightIn(26.dp))
+
+    TextField(
+        value = maxForEachMinutes,
+        onValueChange =
+        { newValue ->
+            if (newValue.matches(Regex("[\\d,.]+"))) {
+                maxForEachMinutes = newValue
+
+                parsedInt2.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
+                if (parsedInt2.intValue == defaultValue && newValue.isNotEmpty()) {
+                    maxForEachMinutes = ""
+                }
+            }
+        },
+        label = { Text("Label") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
+    )
 }
