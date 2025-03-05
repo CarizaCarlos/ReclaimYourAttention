@@ -1,17 +1,29 @@
 package com.reclaimyourattention.ui
 
+import android.content.ContentResolver
+import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -29,17 +41,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.reclaimyourattention.logic.phases.Task
 import com.reclaimyourattention.logic.services.ToolType
+import com.reclaimyourattention.logic.tools.AppInfo
 import com.reclaimyourattention.logic.tools.LimitNotifications
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.Tool
+import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModel
 import com.reclaimyourattention.ui.theme.Gray
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 
 @Composable
@@ -90,10 +110,11 @@ fun ToolContent(tool: Tool, navController: NavController?){
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(36.dp))
-        when (tool) {
-            is RestReminders -> GetRestRemindersParameters()
-            is LimitNotifications -> getLimitNotifications()
-        }
+            GetLimitNotifications()
+            //when (tool) {
+            //is RestReminders -> GetRestRemindersParameters()
+            //is LimitNotifications -> GetLimitNotifications()
+        //}
         }
     }
 }
@@ -123,7 +144,7 @@ fun GetRestRemindersParameters() {
         placeholder = { Text("0") } // Placeholder para indicar el valor esperado
     )
 
-    // Formatear datos
+    // Formatear datos y botón
         var param1 = activityMinutesThreshold.toInt()
         Button(
             onClick = {if(activityMinutesThreshold.matches(Regex("[\\d,.]+")))
@@ -136,8 +157,105 @@ fun GetRestRemindersParameters() {
                 style = MaterialTheme.typography.labelLarge
             )
         }
-    // Botón
 }
 
 
-fun getLimitNotifications() {}
+@Composable
+fun GetLimitNotifications() {
+    val context = LocalContext.current
+    val viewModel: AppBlockViewModel = viewModel { AppBlockViewModel(context) }
+    val installedApps: List<AppInfo> = viewModel.installedApps.collectAsState(initial = emptyList()).value
+    val blockedPackages by viewModel.blockedPackages
+
+    // Estado para el input manual
+    val newPackageName = remember { mutableStateOf("") }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        // Sección de entrada manual
+        TextField(
+            value = newPackageName.value,
+            onValueChange = { newValue ->
+                if (newValue.matches(Regex("^[a-zA-Z0-9.]*$"))) {
+                    newPackageName.value = newValue
+                }
+            },
+            label = { Text("Ingresar paquete manualmente") },
+            placeholder = { Text("Ej: com.whatsapp") },
+            trailingIcon = {
+                if (newPackageName.value.isNotEmpty()) {
+                    IconButton(
+                        onClick = {
+                            viewModel.toggleBlock(newPackageName.value)
+                            newPackageName.value = ""
+                        }
+                    ) {
+                        Icon(Icons.Default.Add, "Añadir manualmente")
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Lista de aplicaciones instaladas
+        Text(
+            text = "Seleccionar aplicaciones:",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
+            items(installedApps) { app -> // Aquí 'app' es de tipo AppInfo
+                AppListItem(
+                    app = app,
+                    isBlocked = blockedPackages.contains(app.packageName),
+                    onToggle = { viewModel.toggleBlock(app.packageName) }
+                )
+            }
+        }
+
+        // Lista de paquetes bloqueados
+        Text("Paquetes bloqueados:",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 8.dp))
+
+        LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
+            items(blockedPackages.toList()) { pkg ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                ) {
+                    Text(
+                        text = installedApps.firstOrNull { it.packageName == pkg }?.name ?: pkg,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(
+                        onClick = { viewModel.toggleBlock(pkg) }
+                    ) {
+                        Icon(Icons.Default.Delete, "Desbloquear")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AppListItem(app: AppInfo, isBlocked: Boolean, onToggle: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onToggle() }
+            .padding(8.dp)
+    ) {
+        Icon(
+            imageVector = if (isBlocked) Icons.Filled.Block else Icons.Filled.CheckCircle,
+            contentDescription = null,
+            tint = if (isBlocked) MaterialTheme.colorScheme.error
+            else MaterialTheme.colorScheme.primary
+        )
+        Text(app.name)
+    }
+}

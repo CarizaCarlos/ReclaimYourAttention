@@ -30,13 +30,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.*
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.services.AppBlockService
 import com.reclaimyourattention.logic.services.RestRemindersService
 import com.reclaimyourattention.logic.tools.ToolManager
+import com.reclaimyourattention.ui.GetLimitNotifications
 import com.reclaimyourattention.ui.TaskScreen
 import com.reclaimyourattention.ui.NavigationBar
 import com.reclaimyourattention.ui.ToolScreen
+import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModel
+import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +68,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ReclaimYourAttentionTheme {
                 val navController = rememberNavController()
+                val context = LocalContext.current
 
                 Scaffold(
                     bottomBar = {
