@@ -112,27 +112,37 @@ fun ToolContent(tool: Tool, navController: NavController?){
             )
             Spacer(modifier = Modifier.height(36.dp))
 
-            var blockedPackages = LimitNotifications.blockedPackages
-            GetBlockedPackages(
-                initialBlockedPackages = blockedPackages, // Envía el estado actual
-                onBlockedSelected = { newSelection ->
-                    blockedPackages =
-                        newSelection.toMutableSet() // Actualiza el estado padre
-                }
-            )
-            Button(
-                onClick = { LimitNotifications.activate(blockedPackages) },
-                modifier = Modifier.size(48.dp) // Tamaño del área clickeable
-            ) {
-                Text("Activate")
-            }
-
+            // Parámetros y Botón de Activación Específicos de cada Tool
             when (tool) {
                 is RestReminders -> GetRestRemindersParameters()
-                LimitNotifications -> GetLimitNotifications()
-                LimitTimeInApp -> GetLimitTimeInApp()
+                is LimitNotifications -> GetLimitNotifications()
+                is LimitTimeInApp -> GetLimitTimeInApp()
+            }
+
+            Button(
+                onClick = { tool.deactivate() }
+            ) {
+                Text("Desactivar")
+            }
         }
+    }
+}
+
+@Composable
+fun GetLimitNotifications() {
+    var blockedPackages = LimitNotifications.blockedPackages
+    GetBlockedPackages(
+        initialBlockedPackages = blockedPackages, // Envía el estado actual
+        onBlockedSelected = { newSelection ->
+            blockedPackages =
+                newSelection.toMutableSet() // Actualiza el estado padre
         }
+    )
+
+    Button(
+        onClick = { LimitNotifications.activate(blockedPackages) }
+    ) {
+        Text("Activar")
     }
 }
 
@@ -156,7 +166,10 @@ fun GetBlockedPackages(
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
-        LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .heightIn(max = 100.dp)
+        ) {
             items(blockedPackages.toList()) { pkg ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -186,9 +199,12 @@ fun GetBlockedPackages(
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
-        LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .heightIn(max = 100.dp)
+        ) {
             items(installedApps) { app ->
-                // Si no está bloqueada, la meustra
+                // Si no está bloqueada, la muestra
                 if (!blockedPackages.contains(app.packageName)) {
                     AppListItem(
                         app = app,
@@ -246,10 +262,7 @@ fun GetRestRemindersParameters() {
 }
 
 
-@Composable
-fun GetLimitNotifications() {
 
-}
 
 @Composable
 fun AppListItem(app: AppInfo, isBlocked: Boolean, onToggle: () -> Unit) {
