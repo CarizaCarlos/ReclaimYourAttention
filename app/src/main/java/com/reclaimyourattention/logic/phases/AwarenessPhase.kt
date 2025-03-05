@@ -33,7 +33,7 @@ object AwarenessTasks {
         Task(
             id = "03",
             title = "Agrega tus Primeros Límites de Tiempo",
-            tool = ToolType.LIMIT_DAILY,
+            tool = null,
             taskPrerrequisitesID = setOf("02"),
             isMandatory = true,
             readingMinutes = 1

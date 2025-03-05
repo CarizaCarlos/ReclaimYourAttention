@@ -325,7 +325,7 @@ fun TaskItemsPreview() {
             id = "03",
             title = "Agrega tus Primeros Límites de Tiempo",
             body = "",
-            tool = ToolType.LIMIT_DAILY,
+            tool = null,
             taskPrerrequisitesID = null,
             isMandatory = false,
             readingMinutes = 3

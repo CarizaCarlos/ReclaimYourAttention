@@ -34,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.livedata.observeAsState
+import com.reclaimyourattention.logic.tools.AppBlock
 import com.reclaimyourattention.logic.tools.LimitNotifications
 import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
@@ -117,6 +118,7 @@ private fun TaskContent(task: Task, navController: NavController?) {
                     ToolType.LIMIT_SESSION -> LimitTimePerSession
                     ToolType.REST_REMINDERS -> RestReminders
                     ToolType.LIMIT_NOTIFICATIONS -> LimitNotifications
+                    ToolType.INDIFINITELY -> AppBlock
                 }
 
                 Button(

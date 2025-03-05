@@ -261,8 +261,8 @@ class AppBlockService: Service() { // Independiente, necesaria para el funcionam
                     // Verifica que unblockTime no sea null
                     val blockRequest = blockedPackages[packageName]!![toolType]!!
                     if (blockRequest.unblockTime != null) {
-                        // Verifica que no sea un LIMIT_DAILY con Fecha para evitar que se cancele innecesariamente, lanzar un Log.e
-                        if (toolType == ToolType.LIMIT_DAILY) {
+                        // Verifica que no sea un INDIFINITELY con Fecha para evitar que se cancele innecesariamente, lanzar un Log.e
+                        if (toolType == ToolType.INDIFINITELY) {
                             Log.e("AppBlockService", "El paquete $packageName contiene un request tipo INDEFINITELY con unblockTime no null")
                             return blockRequest
                         }
@@ -273,7 +273,7 @@ class AppBlockService: Service() { // Independiente, necesaria para el funcionam
                         }
                     } else {
                         // Si es de un toolType INDEFINITELY retorna el request
-                        if (toolType == ToolType.LIMIT_DAILY) {
+                        if (toolType == ToolType.INDIFINITELY) {
                             return blockRequest
                         }
                     }
