@@ -7,7 +7,6 @@ object ToolManager { // TODO("tooltype priority traerlo pa'ca")
     private val tools: Set<Tool> = setOf(
         AppBlock,
         LimitNotifications,
-        LimitTimeInApp,
         LimitTimePerSession,
         RestReminders,
         WaitTimeForApp

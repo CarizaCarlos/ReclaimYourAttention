@@ -34,15 +34,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.livedata.observeAsState
-import com.reclaimyourattention.logic.phases.PhaseManager
 import com.reclaimyourattention.logic.tools.LimitNotifications
-import com.reclaimyourattention.logic.tools.LimitTimeInApp
 import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
-import com.reclaimyourattention.logic.tools.Tool
 import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import com.reclaimyourattention.viewmodel.PhaseViewModel
-import com.reclaimyourattention.viewmodel.PhaseViewModel.completedTasks
 
 @Preview(showBackground = true)
 @Composable
@@ -51,7 +47,7 @@ fun TaskScreenPreview() {
     val task = Task(
         id = "01",
         title = "Beneficios de la Escala de Grices y Cómo Activarla",
-        tool = ToolType.LIMIT_DAILY,
+        tool = ToolType.LIMIT_SESSION,
         taskPrerrequisitesID = null,
         isMandatory = true,
         readingMinutes = 4
@@ -119,7 +115,6 @@ private fun TaskContent(task: Task, navController: NavController?) {
                 val tool = when (task.tool) {
                     ToolType.WAIT_TIME -> WaitTimeForApp
                     ToolType.LIMIT_SESSION -> LimitTimePerSession
-                    ToolType.LIMIT_DAILY -> LimitTimeInApp
                     ToolType.REST_REMINDERS -> RestReminders
                     ToolType.LIMIT_NOTIFICATIONS -> LimitNotifications
                 }
