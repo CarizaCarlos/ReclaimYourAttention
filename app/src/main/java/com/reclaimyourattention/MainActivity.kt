@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                 1001
             )
         }
-        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        // startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         // startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
 
         enableEdgeToEdge()

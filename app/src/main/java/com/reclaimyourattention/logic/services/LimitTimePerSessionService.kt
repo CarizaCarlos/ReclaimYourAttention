@@ -29,7 +29,6 @@ class LimitTimePerSessionService: Service() { // Depende de LimitTimePerSession 
 
     // Variables de Control
     private var activeSeconds = 0
-    private var areBlocked = false
     private var isCountActive = false
     private var handlerThread: HandlerThread? = null
     private var handler: Handler? = null
@@ -65,12 +64,7 @@ class LimitTimePerSessionService: Service() { // Depende de LimitTimePerSession 
 
                 activeSeconds = 0 // Reinicia el conteo
 
-                // Desactiva la lógica hasta que se desbloqueen para liberar recursos
-                areBlocked = true
-                Log.d("LimitTimePerSessionService", "Se desactiva la lógica") // Log
-
                 handler?.postDelayed({
-                    areBlocked = false
 
                     // Verifica si la app actual está marcada TODO("No ta funcionando recupera es reclaim your attention app")
                     val currentPackage = ForegroundAppTracker.lastPackageName
@@ -79,8 +73,6 @@ class LimitTimePerSessionService: Service() { // Depende de LimitTimePerSession 
                         handler?.postDelayed(this,refreshSeconds.toLong()*1000)
                         isCountActive = true
                     }
-
-                    Log.d("LimitTimePerSessionService", "Se reactiva la lógica") // Log
                 }, (cooldownMinutes*60).toLong()*1000)
 
                 // Se destruye
@@ -113,13 +105,11 @@ class LimitTimePerSessionService: Service() { // Depende de LimitTimePerSession 
         // Inicializa el Receiver para escuchar cuando se cambia de app
         foregroundAppReceiver = ForegroundAppReceiver(
             onAppChanged = { packageName ->
-                // Verifica si las apps están bloqueadas
-                if (areBlocked) {
-                    return@ForegroundAppReceiver
-                }
+                Log.d("LimitTimePerSessionService", "${ packageName in blockedPackages }")
 
                 // Verifica si el paquete está marcado
                 if (packageName in blockedPackages) {
+                    Log.d("LimitTimePerSessionService", "${!isCountActive}")
                     // Verifica si countRunnable no está activo
                     if (!isCountActive) {
                         // Elimina inactivityRunnable
@@ -144,6 +134,15 @@ class LimitTimePerSessionService: Service() { // Depende de LimitTimePerSession 
                 }
             }
         )
+
+        // Crea el filtro y registra el Receiver
+        val filter = IntentFilter("FOREGROUND_APP_CHANGED")
+        ContextCompat.registerReceiver(
+            this,
+            foregroundAppReceiver,
+            filter,
+            ContextCompat.RECEIVER_EXPORTED
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -166,14 +165,7 @@ class LimitTimePerSessionService: Service() { // Depende de LimitTimePerSession 
         Log.d("LimitTimePerSessionService", "activeMinutesTreshold: $activeMinutesTreshold, " +
                 "cooldownMinutes: $cooldownMinutes, blockedPackages: $blockedPackages") // Log
 
-        // Crea el filtro y registra el Receiver
-        val filter = IntentFilter("FOREGROUND_APP_CHANGED")
-        ContextCompat.registerReceiver(
-            this,
-            foregroundAppReceiver,
-            filter,
-            ContextCompat.RECEIVER_EXPORTED
-        )
+        //
 
         Log.d("LimitTimePerSessionService", "Servicio Activado") // Log
 

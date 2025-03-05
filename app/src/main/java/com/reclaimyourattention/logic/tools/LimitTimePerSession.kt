@@ -2,6 +2,7 @@ package com.reclaimyourattention.logic.tools
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.logic.services.LimitTimePerSessionService
@@ -26,13 +27,17 @@ object LimitTimePerSession: Tool() {
         StorageManager.saveInt("${storageKey}_activeMinutesTreshold", activeMinutesTreshold)
         StorageManager.saveInt("${storageKey}_cooldownMinutes", cooldownMinutes)
         super.saveState()
+
+        Log.d(storageKey, "Datos guardados: active: $active, blockedPackages: $blockedPackages, activeMinutesTreshold: $activeMinutesTreshold, cooldownMinutes: $cooldownMinutes")
     }
 
     override fun loadState() {
-        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages).toMutableSet()
         activeMinutesTreshold = StorageManager.getInt("${storageKey}_activeMinutesTreshold", activeMinutesTreshold)
         cooldownMinutes = StorageManager.getInt("${storageKey}_cooldownMinutes", cooldownMinutes)
         super.loadState()
+
+        Log.d(storageKey, "Datos cargados: active: $active, blockedPackages: $blockedPackages, activeMinutesTreshold: $activeMinutesTreshold, cooldownMinutes: $cooldownMinutes")
     }
 
     override fun activate(vararg parameters: Any) { // activeMinutesTreshold: Int, cooldownMinutes: Int, blockedPackages: MutableSet<String>

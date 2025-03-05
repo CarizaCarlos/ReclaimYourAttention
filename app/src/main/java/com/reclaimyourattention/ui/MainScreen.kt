@@ -56,6 +56,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.reclaimyourattention.logic.tools.AppBlock
 import com.reclaimyourattention.logic.tools.LimitNotifications
+import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.WaitTimeForApp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -132,13 +133,13 @@ fun MainScreen(navController: NavController? = null) {
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // TODO("QUITAR TEST")
             Button(
                 onClick = {
-                    RestReminders.activate(1)
+                    LimitTimePerSession.activate(1,1,mutableSetOf("com.mand.notitest"))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,7 +211,7 @@ fun MainScreen(navController: NavController? = null) {
                     ) {
                         Text(
                             text = "Obligatorias",
-                            style = MaterialTheme.typography.labelLarge
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
 
@@ -232,7 +233,7 @@ fun MainScreen(navController: NavController? = null) {
                     ) {
                         Text(
                             text = "Herramientas",
-                            style = MaterialTheme.typography.labelLarge
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }
@@ -256,7 +257,7 @@ fun MainScreen(navController: NavController? = null) {
                 ) {
                     Text(
                         text = "Opcionales",
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelMedium
                     )
                 }
             }

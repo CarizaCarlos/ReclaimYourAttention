@@ -17,6 +17,7 @@ object ToolManager { // TODO("tooltype priority traerlo pa'ca")
     fun saveStates() {
         Log.d("ToolManager", "Se guardan los datos de las Herramientas")
         for (tool in tools) {
+            Log.d("ToolManager", tool.title)
             tool.saveState()
         }
     }
@@ -24,6 +25,7 @@ object ToolManager { // TODO("tooltype priority traerlo pa'ca")
     fun loadStates() {
         Log.d("PhaseManager", "Se cargan los datos de las Herramientas")
         for (tool in tools) {
+            Log.d("ToolManager", tool.title)
             tool.loadState()
         }
     }
