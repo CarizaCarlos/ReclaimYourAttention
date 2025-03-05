@@ -35,32 +35,26 @@ import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.ui.BlockedAppScreen
 
 class AppBlockService: Service() { // Independiente, necesaria para el funcionamiento de varias Tools
-    // TODO("Al hacer click en el menu de nav del dispositivo, se quita el bloqueo")
     companion object {
         // Atributos
         private val storageKey = "AppBlockService"
-
-        // Variables de Control
-        var active: Boolean = false
-            private set
 
         // Parámetros
         private var blockedPackages: MutableMap<String, MutableMap<ToolType, BlockRequest?>> = mutableMapOf() // La clave corresponde al paquete de la app a bloquear
 
         // Métodos de Carga / Guardado
         fun saveState() {
-            StorageManager.saveBoolean("${storageKey}_active", active)
             StorageManager.saveMap("${storageKey}_blockedPackages", blockedPackages)
+
+            Log.d(storageKey, "Datos guardados: blockedPackages: $blockedPackages")
         }
 
         fun loadState() {
             blockedPackages = StorageManager.getMap("${storageKey}_blockedPackages", blockedPackages)
-            active = StorageManager.getBoolean("${storageKey}_active", active)
 
-            if (active) {
-                // Se inicia si estaba activo
-                appContext.startService(Intent(appContext, AppBlockService::class.java))
-            }
+            Log.d(storageKey, "Datos cargados: blockedPackages: $blockedPackages")
+
+            appContext.startService(Intent(appContext, AppBlockService::class.java))
         }
     }
 

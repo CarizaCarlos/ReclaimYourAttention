@@ -27,7 +27,10 @@ import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.*
+import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.phases.PhaseManager
+import com.reclaimyourattention.logic.services.AppBlockService
+import com.reclaimyourattention.logic.services.RestRemindersService
 import com.reclaimyourattention.logic.tools.ToolManager
 import com.reclaimyourattention.ui.TaskScreen
 import com.reclaimyourattention.ui.NavigationBar
@@ -37,11 +40,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Carga los Servicios Independientes
+        AppBlockService.loadState()
+
         // Carga los estados guardados
         PhaseManager.loadStates()
         ToolManager.loadStates()
 
-        // startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)) TODO("Permisos")
+        // Permisos TODO()
+        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        // startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
 
         enableEdgeToEdge()
         setContent {

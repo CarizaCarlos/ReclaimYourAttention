@@ -23,11 +23,15 @@ object AppBlock: Tool() {
     override fun saveState() {
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
         super.saveState()
+
+        Log.d(storageKey, "Datos guardados: active: $active, blockedPackages: $blockedPackages")
     }
 
     override fun loadState() {
-        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages) as MutableSet<String>
+        blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages).toMutableSet()
         super.loadState()
+
+        Log.d(storageKey, "Datos cargados: active: $active, blockedPackages: $blockedPackages")
     }
 
     override fun activate(vararg parameters: Any) { // appPackages: MutableSet<String>

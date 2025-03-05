@@ -1,6 +1,7 @@
 package com.reclaimyourattention.logic.tools
 
 import android.content.Context
+import android.util.Log
 import com.reclaimyourattention.ReclaimYourAttention.Companion.appContext
 import com.reclaimyourattention.logic.StorageManager
 import com.reclaimyourattention.logic.services.LimitNotificationsService
@@ -19,11 +20,15 @@ object LimitNotifications: Tool() {
     override fun saveState() {
         StorageManager.saveStringSet("${storageKey}_blockedPackages", blockedPackages)
         super.saveState()
+
+        Log.d(storageKey, "Datos guardados: active: $active, blockedPackages: $blockedPackages")
     }
 
     override fun loadState() {
         blockedPackages = StorageManager.getStringSet("${storageKey}_blockedPackages", blockedPackages).toMutableSet()
         super.loadState()
+
+        Log.d(storageKey, "Datos cargados: active: $active, blockedPackages: $blockedPackages")
     }
 
     override fun activate(vararg parameters: Any) { // blockedPackages: MutableSet<String>

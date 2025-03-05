@@ -54,6 +54,7 @@ import com.reclaimyourattention.viewmodel.PhaseViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.reclaimyourattention.logic.tools.AppBlock
 import com.reclaimyourattention.logic.tools.LimitNotifications
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -135,7 +136,7 @@ fun MainScreen(navController: NavController? = null) {
             // TODO("QUITAR TEST")
             Button(
                 onClick = {
-                    LimitNotifications.activate(mutableSetOf("com.mand.notitest"))
+                    AppBlock.activate(mutableSetOf("com.mand.notitest"))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
