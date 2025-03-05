@@ -57,6 +57,7 @@ import com.reclaimyourattention.logic.tools.LimitTimeInApp
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.Tool
 import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModel
+import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModelFactory
 import com.reclaimyourattention.ui.theme.Gray
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -110,6 +111,22 @@ fun ToolContent(tool: Tool, navController: NavController?){
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(36.dp))
+
+            var blockedPackages = LimitNotifications.blockedPackages
+            GetBlockedPackages(
+                initialBlockedPackages = blockedPackages, // Envía el estado actual
+                onBlockedSelected = { newSelection ->
+                    blockedPackages =
+                        newSelection.toMutableSet() // Actualiza el estado padre
+                }
+            )
+            Button(
+                onClick = { LimitNotifications.activate(blockedPackages) },
+                modifier = Modifier.size(48.dp) // Tamaño del área clickeable
+            ) {
+                Text("Activate")
+            }
+
             when (tool) {
                 is RestReminders -> GetRestRemindersParameters()
                 LimitNotifications -> GetLimitNotifications()
@@ -120,9 +137,15 @@ fun ToolContent(tool: Tool, navController: NavController?){
 }
 
 @Composable
-fun GetBlockedPackages() {
+fun GetBlockedPackages(
+    initialBlockedPackages: Set<String> = emptySet(), // Valor inicial
+    onBlockedSelected: (Set<String>) -> Unit // Callback para el botón
+) {
     val context = LocalContext.current
-    val viewModel: AppBlockViewModel = viewModel { AppBlockViewModel(context) }
+    val viewModel: AppBlockViewModel = viewModel(
+        factory = AppBlockViewModelFactory(context, initialBlockedPackages)
+    )
+
     val installedApps: List<AppInfo> = viewModel.installedApps.collectAsState(initial = emptyList()).value
     val blockedPackages by viewModel.blockedPackages
 
@@ -146,7 +169,10 @@ fun GetBlockedPackages() {
                         modifier = Modifier.weight(1f)
                     )
                     IconButton(
-                        onClick = { viewModel.toggleBlock(pkg) }
+                        onClick = {
+                            viewModel.toggleBlock(pkg)
+                            onBlockedSelected(viewModel.blockedPackages.value)
+                        }
                     ) {
                         Icon(Icons.Default.Delete, "Desbloquear")
                     }
@@ -167,7 +193,10 @@ fun GetBlockedPackages() {
                     AppListItem(
                         app = app,
                         isBlocked = blockedPackages.contains(app.packageName),
-                        onToggle = { viewModel.toggleBlock(app.packageName) }
+                        onToggle = {
+                            viewModel.toggleBlock(app.packageName)
+                            onBlockedSelected(viewModel.blockedPackages.value)
+                        }
                     )
                 }
             }

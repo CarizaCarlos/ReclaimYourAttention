@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.coil.compose.v240)
+
     implementation(platform(libs.androidx.compose.bom.v20250200))
     implementation(libs.androidx.runtime.livedata)
     androidTestImplementation(platform(libs.androidx.compose.bom.v20250200))
