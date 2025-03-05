@@ -23,6 +23,8 @@ lifecycleService = "2.8.7"
 navigationComposeVersion = "2.5.0-alpha01"
 savedstate = "1.2.1"
 runtimeLivedata = "1.7.8"
+coil = "2.5.0"
+coroutines = "1.7.0"
 
 [libraries]
 androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
@@ -63,6 +65,8 @@ ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -56,6 +56,9 @@ dependencies {
     implementation(libs.androidx.adaptive)
     implementation(libs.androidx.activity.compose.v192)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.coil.compose)
+    implementation(libs.coroutines.core)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx.v270)
