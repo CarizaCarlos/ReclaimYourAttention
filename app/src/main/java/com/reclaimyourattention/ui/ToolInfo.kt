@@ -262,9 +262,6 @@ fun GetRestRemindersParameters() {
         }
 }
 
-
-
-
 @Composable
 fun AppListItem(app: AppInfo, isBlocked: Boolean, onToggle: () -> Unit) {
     Row(
@@ -283,7 +280,6 @@ fun AppListItem(app: AppInfo, isBlocked: Boolean, onToggle: () -> Unit) {
         Text(app.name)
     }
 }
-
 
 @Composable
 fun GetLimitTimeInApp(){
@@ -330,7 +326,21 @@ fun GetLimitTimeInApp(){
         placeholder = { Text("0") } // Placeholder para indicar el valor esperado
     )
 
-    //Falta boton para enviar Info y el parametro blockedPackages
+    var blockedPackages = LimitNotifications.blockedPackages
+    GetBlockedPackages(
+        initialBlockedPackages = blockedPackages, // Envía el estado actual
+        onBlockedSelected = { newSelection ->
+            blockedPackages =
+                newSelection.toMutableSet() // Actualiza el estado padre
+        }
+    )
+
+    // TODO("POner bien los parametros en orden")
+//    Button(
+//        onClick = { LimitTimeInApp.activate(blockedPackages) }
+//    ) {
+//        Text("Activar")
+//    }
 }
 
 @Composable
@@ -381,4 +391,19 @@ fun GetLimitTimePerSession(){
         placeholder = { Text("0") } // Placeholder para indicar el valor esperado
     )
 
-    }
+    var blockedPackages = LimitNotifications.blockedPackages
+    GetBlockedPackages(
+        initialBlockedPackages = blockedPackages, // Envía el estado actual
+        onBlockedSelected = { newSelection ->
+            blockedPackages =
+                newSelection.toMutableSet() // Actualiza el estado padre
+        }
+    )
+
+    // TODO("POner bien los parametros en orden")
+//    Button(
+//        onClick = { LimitTimeInApp.activate(blockedPackages) }
+//    ) {
+//        Text("Activar")
+//    }
+}
