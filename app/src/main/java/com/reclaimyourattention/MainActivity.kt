@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -71,7 +72,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = "main",
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .navigationBarsPadding()
                     ) {
                         // Pantallas principales
                         composable("main") { MainScreen(navController) }
@@ -91,32 +94,6 @@ class MainActivity : ComponentActivity() {
         // Guarda los estados
         PhaseManager.saveStates()
         ToolManager.saveStates()
-    }
-}
-
-
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-            text = "Hello $name!",
-            modifier = modifier
-
-    )
-}
-
-@Preview()
-@Composable
-fun GreetingPreview() {
-    //A
-    ReclaimYourAttentionTheme {
-
-        Column(modifier = Modifier.fillMaxWidth().padding(top=90.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-        }
     }
 }
 

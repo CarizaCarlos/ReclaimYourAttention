@@ -133,57 +133,67 @@ fun MainScreen(navController: NavController? = null) {
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(18.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .padding(horizontal = 18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // TODO("QUITAR TEST")
-            Button(
-                onClick = {
-                    LimitTimePerSession.activate(1,1,mutableSetOf("com.mand.notitest"))
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedFilter == FilterType.OPCIONALES) {
-                        MaterialTheme.colorScheme.tertiary
-                    } else {
-                        Gray
-                    }
-                )
-            ) {
-                Text(
-                    text = "Test",
-                )
-            }
+//            Button(
+//                onClick = {
+//                    LimitTimePerSession.activate(1,1,mutableSetOf("com.mand.notitest"))
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 24.dp),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = if (selectedFilter == FilterType.OPCIONALES) {
+//                        MaterialTheme.colorScheme.tertiary
+//                    } else {
+//                        Gray
+//                    }
+//                )
+//            ) {
+//                Text(
+//                    text = "Test",
+//                )
+//            }
 
             // Información de la Fase
             currentPhase?.let { phase ->
-                Text(
-                    text = phase.title,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = "Semana ${phase.currentWeekIndex+1}",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = phase.title,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = "Semana ${phase.currentWeekIndex+1}",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = phase.description,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                    Text(
+                        text = phase.description,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             // Botones de Filtrado
             Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -265,7 +275,11 @@ fun MainScreen(navController: NavController? = null) {
             Spacer(modifier = Modifier.height(8.dp))
 
             // Tareas
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
                 items(filteredCurrentTasks) { task ->
                     TaskItem(
                         task = task,
@@ -375,7 +389,7 @@ fun TaskItem(task: Task, areDone: Boolean = false, navController: NavController?
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min)
+                .height(IntrinsicSize.Max)
                 .background(DarkGray),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -433,6 +447,7 @@ fun TaskItem(task: Task, areDone: Boolean = false, navController: NavController?
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .weight(1f)
                     .padding(8.dp)
             ) {
                 Text(

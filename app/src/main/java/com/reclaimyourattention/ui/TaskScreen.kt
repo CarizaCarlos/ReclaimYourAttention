@@ -28,6 +28,8 @@ import com.reclaimyourattention.ui.theme.Gray
 import com.reclaimyourattention.ui.theme.ReclaimYourAttentionTheme
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -81,7 +83,8 @@ private fun TaskContent(task: Task, navController: NavController?) {
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Botón para Regresar
