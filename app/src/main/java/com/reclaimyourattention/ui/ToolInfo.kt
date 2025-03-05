@@ -54,6 +54,7 @@ import com.reclaimyourattention.logic.services.ToolType
 import com.reclaimyourattention.logic.tools.AppInfo
 import com.reclaimyourattention.logic.tools.LimitNotifications
 import com.reclaimyourattention.logic.tools.LimitTimeInApp
+import com.reclaimyourattention.logic.tools.LimitTimePerSession
 import com.reclaimyourattention.logic.tools.RestReminders
 import com.reclaimyourattention.logic.tools.Tool
 import com.reclaimyourattention.ui.ToolsScreens.AppBlockViewModel
@@ -131,6 +132,7 @@ fun ToolContent(tool: Tool, navController: NavController?){
                 is RestReminders -> GetRestRemindersParameters()
                 LimitNotifications -> GetLimitNotifications()
                 LimitTimeInApp -> GetLimitTimeInApp()
+                LimitTimePerSession ->GetLimitTimePerSession()
         }
         }
     }
@@ -315,4 +317,56 @@ fun GetLimitTimeInApp(){
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         placeholder = { Text("0") } // Placeholder para indicar el valor esperado
     )
+
+    //Falta boton para enviar Info y el parametro blockedPackages
 }
+
+@Composable
+fun GetLimitTimePerSession(){
+    var activeMinutesThreshold by remember { mutableStateOf("0") }
+    val parsedInt = remember { mutableIntStateOf(0) } // Variable donde se almacenará el entero
+    var cooldownMinutes by remember { mutableStateOf("0") }
+    val parsedInt2 = remember { mutableIntStateOf(0) } // Variable donde se almacenará el entero
+
+    val defaultValue = 0
+    TextField(
+        value = activeMinutesThreshold,
+        onValueChange =
+        { newValue ->
+            if (newValue.matches(Regex("[\\d,.]+"))) { // Solo permite dígitos numéricos
+                activeMinutesThreshold = newValue
+
+                parsedInt.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
+                if (parsedInt.intValue == defaultValue && newValue.isNotEmpty()) {
+                    activeMinutesThreshold = ""
+
+                }
+            }
+        }, // Verificar que sea un numero
+
+        label = { Text("Label") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
+    )
+    Spacer(Modifier.heightIn(36.dp))
+    TextField(
+        value = cooldownMinutes,
+        onValueChange =
+        { newValue ->
+            if (newValue.matches(Regex("[\\d,.]+"))) { // Solo permite dígitos numéricos
+                cooldownMinutes = newValue
+
+                parsedInt2.intValue = if (newValue.isEmpty()) 0 else newValue.toInt()
+                if (parsedInt2.intValue == defaultValue && newValue.isNotEmpty()) {
+                    cooldownMinutes = ""
+
+                }
+            }
+        },
+
+        label = { Text("Label") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        placeholder = { Text("0") } // Placeholder para indicar el valor esperado
+    )
+
+    }
